@@ -522,7 +522,6 @@ data.frame(bind_rows(passed,failed)) # combine the tables into a single table
      * *stopwatch():* start timer until the next use of *stopwatch()*
 
 
-
 --- 
 
 ## Recall.. Before Machine Learning
@@ -723,6 +722,11 @@ ggplot(mtcars,aes(factor(am),mpg)) +
 ```
 
 ![plot of chunk unnamed-chunk-44](assets/fig/unnamed-chunk-44-1.png)
+
+---
+## Quiz 5: Data Cleaning and Exploration
+
+# https://goo.gl/KwL76T
 
 --- 
 
@@ -1302,6 +1306,11 @@ varImpPlot(classModel)
 * Example: 
 
 ![plot of chunk unnamed-chunk-109](assets/fig/unnamed-chunk-109-1.png)
+
+---
+## Quiz 6: Machine Learning
+
+# https://goo.gl/K7H5Ga
 
 ---
 ## Sources

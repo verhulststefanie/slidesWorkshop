@@ -423,7 +423,6 @@ data.frame(bind_rows(passed,failed)) # combine the tables into a single table
      * *stopwatch():* start timer until the next use of *stopwatch()*
 
 
-
 --- 
 
 ## Recall.. Before Machine Learning
@@ -597,6 +596,11 @@ ggplot(mtcars,aes(factor(am),mpg)) +
      scale_fill_manual("Transmission Type",values=c("Darkblue","steelblue")) +
      coord_flip()
 ```
+
+---
+## Quiz 5: Data Cleaning and Exploration
+
+# https://goo.gl/KwL76T
 
 --- 
 
@@ -1603,6 +1607,11 @@ abline(a=0,b=1,lwd=2,lty=2,col="gray")
 legend(0.4,0.2,c.legend,lty=c(1,1,1,1,1),
        lwd=c(2,2,2,2,2),col=c("red","black","green"))
 ```
+
+---
+## Quiz 6: Machine Learning
+
+# https://goo.gl/K7H5Ga
 
 ---
 ## Sources
