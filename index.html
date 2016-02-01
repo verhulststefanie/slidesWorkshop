@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Introduction to Machine Learning</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Introduction to Machine Learning">
+  <meta name="author" content="Stefanie Verhulst">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/bootstrap/css/bootstrap.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <aside class="gdbar">
+    <img src="assets/img/archimiddle.png">
+  </aside>
+  <hgroup class="auto-fadein">
+    <h1>Introduction to Machine Learning</h1>
+    <h2>Illustrated with R</h2>
+    <p>Stefanie Verhulst<br/>Data Scientist at Archimiddle</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <article data-timings="">
+    <!-- Limit image width and height for all images -->
+
+<style type='text/css'>
+img {
+    max-height: 400px;
+}
+</style>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+}
+</style>
+
+<!-- Center image on slide -->
+
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+
+<script type='text/javascript'>
+$(function() {
+    $("p:has(img)").addClass('centered');
+});
+</script>
+
+<style>
+em {
+  font-style: italic
+}
+</style>
+
+<h2>Part 1: Theoretical Machine Learning</h2>
+
+<p>Machine learning:</p>
+
+<ul>
+<li>Takes knowledge as input</li>
+<li>Receives parameter settings</li>
+<li>??? (Magic)</li>
+<li>Produces knowledge as output</li>
+</ul>
+
+<blockquote>
+<p>A machine learning system is a function \(L\) that, given some input knowledge \(I \in \mathcal{I}\) and parameter settings \(p \in P\), produces an output called a model or hypothesis \(O \in \mathcal{O}\): \[\mathcal{L}: \mathcal{I} \times \mathcal{P} \rightarrow \mathcal{O}\]</p>
+</blockquote>
+
+<p><strong>BUT FIRST... Get to know your data!</strong></p>
+
+<p>It is bad practice to apply machine learning on a dataset you don&#39;t know!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Before Machine Learning</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Generally, these are the steps you should take:</p>
+
+<ol>
+<li>Get data</li>
+<li>Clean and/or anonymize data</li>
+<li>Explore data:
+
+<ul>
+<li>What is in it?</li>
+<li>What is useful? (Any of it? Anonymized beyond recognition?)</li>
+<li>Does it need more cleaning?</li>
+</ul></li>
+<li>Apply statistical methods:
+
+<ul>
+<li>What are the trends in your data?</li>
+<li>What is normal behaviour and what is outlier behaviour?</li>
+</ul></li>
+<li>Fit simple models, eg. regression model</li>
+<li>Finally: <strong>apply machine learning algorithms!</strong></li>
+<li>Evaluate, repeat if needed</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Steps 1-2: Getting and Cleaning Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Often, <em>useful</em> data is hard to come by</p>
+
+<ul>
+<li><strong>Option 1:</strong> work with what you have
+
+<ul>
+<li>Problem: garbage in, garbage out</li>
+</ul></li>
+<li><strong>Option 2:</strong> get better data
+
+<ul>
+<li>Problem: not always possible</li>
+</ul></li>
+</ul>
+
+<div>
+  
+</div>
+<div style='float:left;width:70%;'>
+  <p>Maybe, we can salvage something from the provided dataset:</p>
+
+<ul>
+<li>Data manipulation - <strong>[R package] dplyr</strong></li>
+<li>Data grouping and chaining - <strong>[R package] dplyr</strong></li>
+<li>Tidying data - <strong>[R package] tidyr</strong></li>
+<li>Assemble dates and times - <strong>[R package] lubridate</strong></li>
+</ul>
+
+</div>
+<div style='float:right;width:30%;'>
+  <div style='text-align: center;'>
+    <img height='10' src='R.png' />
+</div>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>R Package: dplyr</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:80%;'>
+  <ul>
+<li>Data manipulation:
+
+<ul>
+<li><em>select():</em> take out some columns</li>
+<li><em>filter():</em> take out some rows</li>
+<li><em>arrange():</em> order rows by column value</li>
+<li><em>mutate():</em> create column from other column value</li>
+<li><em>summarize():</em> collapse data using a function, eg. mean()</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:20%;'>
+  <div style='text-align: center;'>
+    <img height='300' src='dplyr.png' />
+</div>
+
+</div>
+<div style='float:left;width:100%;'>
+  <ul>
+<li>Data grouping and chaining:
+
+<ul>
+<li><em>group_by():</em> break dataset into groups based on column value</li>
+<li><em>summarize()</em> on data grouped by <em>group_by()</em></li>
+<li><em>%&gt;%</em>: chaining operator to chain execution of dplyr commands</li>
+</ul></li>
+</ul>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Data Manipulation with dplyr: <em>select()</em> Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Example dataset (R package download logs from CRAN for 1 day, \(\pm\) 225,000 rows):</p>
+
+<pre><code>##   X       date     time   size r_version r_arch      r_os   package version country ip_id
+## 1 1 2014-07-08 00:54:41  80589     3.1.0 x86_64   mingw32 htmltools   0.2.4      US     1
+## 2 2 2014-07-08 00:59:53 321767     3.1.0 x86_64   mingw32   tseries 0.10-32      US     2
+## 3 3 2014-07-08 00:47:13 748063     3.1.0 x86_64 linux-gnu     party  1.0-15      US     3
+</code></pre>
+
+<ul>
+<li>Load into dplyr, <em>select()</em> some of the columns we&#39;re interested in:</li>
+</ul>
+
+<pre><code class="r">cranShort &lt;- select(cran, size:version) # Select columns size through version
+</code></pre>
+
+<pre><code>##     size r_version r_arch      r_os   package version
+## 1  80589     3.1.0 x86_64   mingw32 htmltools   0.2.4
+## 2 321767     3.1.0 x86_64   mingw32   tseries 0.10-32
+## 3 748063     3.1.0 x86_64 linux-gnu     party  1.0-15
+## 4 606104     3.1.0 x86_64 linux-gnu     Hmisc  3.14-4
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>Data Manipulation with dplyr: <em>filter()</em> Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><em>filter()</em> is like <em>select()</em>, but it takes rows instead of columns</li>
+<li>Let&#39;s take the rows for the <em>&#39;dplyr&#39;</em> package downloads:</li>
+</ul>
+
+<pre><code class="r">filter(cranShort, package ==&#39;dplyr&#39;) # Retain only rows for package dplyr
+</code></pre>
+
+<pre><code>##     size r_version r_arch         r_os package version
+## 1 591176     3.0.3 x86_64      mingw32   dplyr     0.2
+## 2 591176     3.1.0 x86_64    linux-gnu   dplyr     0.2
+## 3 591178     3.1.0 x86_64      mingw32   dplyr     0.2
+## 4 591179     3.1.0   i386      mingw32   dplyr     0.2
+## 5 591176     3.0.2 x86_64    linux-gnu   dplyr     0.2
+## 6 591178     3.0.2 x86_64 darwin10.8.0   dplyr     0.2
+</code></pre>
+
+<ul>
+<li>Useful <em>filter()</em> trick: remove rows with NA&#39;s ( = missing values):</li>
+</ul>
+
+<pre><code class="r">filter(cranShort, !is.na(r_version)) # Filters out rows where r_version is NA
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>Data Manipulation with dplyr: <em>arrange()</em> Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Order rows of a dataset by column value: <em>arrange()</em></li>
+<li>Let&#39;s use it to order the data by package size:</li>
+</ul>
+
+<pre><code class="r">arrange(cranShort, size) # Order dataset by size column
+</code></pre>
+
+<pre><code>##   size r_version r_arch r_os package version
+## 1  512      &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt; ellipse   0.3-8
+## 2  513      &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;   class  7.3-10
+</code></pre>
+
+<ul>
+<li>The same in descending order:</li>
+</ul>
+
+<pre><code class="r">arrange(cranShort, desc(size)) # Order dataset by size column
+</code></pre>
+
+<pre><code>##       size r_version r_arch    r_os               package version
+## 1 62559635     3.0.3 x86_64 mingw32 ChemometricsWithRData   0.1.3
+## 2 62559246     3.0.3 x86_64 mingw32 ChemometricsWithRData   0.1.3
+## 3 62553483     3.1.0   i386 mingw32 ChemometricsWithRData   0.1.3
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>Data Manipulation with dplyr: <em>mutate()</em> Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Create new columns out of (combinations of) other columns: <em>mutate()</em></li>
+<li>Eg. convert size column, now in bytes, to megabytes and gigabytes:</li>
+</ul>
+
+<pre><code class="r"># Create column of size in MB and GB
+mutate(cranShort, size_mb = size / 2^20, size_gb = size_mb / 2^10)
+</code></pre>
+
+<pre><code>##     size r_version r_arch      r_os      package version    size_mb      size_gb
+## 1  80589     3.1.0 x86_64   mingw32    htmltools   0.2.4 0.07685566 7.505435e-05
+## 2 321767     3.1.0 x86_64   mingw32      tseries 0.10-32 0.30686092 2.996689e-04
+## 3 748063     3.1.0 x86_64 linux-gnu        party  1.0-15 0.71340847 6.966880e-04
+## 4 606104     3.1.0 x86_64 linux-gnu        Hmisc  3.14-4 0.57802582 5.644783e-04
+## 5  79825     3.0.2 x86_64 linux-gnu       digest   0.6.4 0.07612705 7.434282e-05
+## 6  77681     3.1.0 x86_64 linux-gnu randomForest   4.6-7 0.07408237 7.234607e-05
+## 7 393754     3.1.0 x86_64 linux-gnu         plyr   1.8.1 0.37551308 3.667120e-04
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Data Manipulation with dplyr: <em>summarize()</em> Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><em>summarize()</em> can be used to collapse the dataset using a function</li>
+<li>Let&#39;s do this using the mean package size:</li>
+</ul>
+
+<pre><code class="r">summarize(cran, avg_bytes = mean(size)) # Show the mean of the size column
+</code></pre>
+
+<pre><code>##   avg_bytes
+## 1  844086.5
+</code></pre>
+
+<ul>
+<li>Not very interesting ... yet</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    <h2>Data Grouping with dplyr: <em>group_by()</em> Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Break the dataset into groups based on column value: <em>group_by()</em></li>
+<li>Eg. grouping on the <em>&#39;package&#39;</em> column:</li>
+</ul>
+
+<pre><code class="r">group_by(cranShort, package)
+</code></pre>
+
+<pre><code>## Source: local data frame [3 x 6]
+## Groups: package [3]
+## 
+##     size r_version r_arch      r_os   package version
+##    (int)     (chr)  (chr)     (chr)     (chr)   (chr)
+## 1  80589     3.1.0 x86_64   mingw32 htmltools   0.2.4
+## 2 321767     3.1.0 x86_64   mingw32   tseries 0.10-32
+## 3 748063     3.1.0 x86_64 linux-gnu     party  1.0-15
+</code></pre>
+
+<ul>
+<li>&#39;Groups: package&#39; implies a grouping by package occurred, all else is unchanged </li>
+<li><strong>Any operation we apply to the grouped data will take place on a per package basis!</strong></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>Data Grouping with dplyr: <em>summarize()</em> Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Any operation applied to grouped data takes place on a per group basis</li>
+<li>Let&#39;s try <em>summarize()</em> again, but on grouped data:</li>
+</ul>
+
+<pre><code class="r">summarize(group_by(cranShort, package), avg_bytes = mean(size))
+</code></pre>
+
+<pre><code>##       package  avg_bytes
+## 1          A3   62194.96
+## 2         abc 4826665.00
+## 3    abcdeFBA  455979.87
+## 4 ABCExtremes   22904.33
+## 5    ABCoptim   17807.25
+## 6       ABCp2   30473.33
+</code></pre>
+
+<p>Instead of a single value, <em>summarize()</em> now returned the mean size for each package!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h2>Data Chaining with dplyr: Chaining Operator <em>%&gt;%</em></h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Chaining operator is syntactic sugar - no added value apart from cleaner code </li>
+<li>Format: <em>dataset %&gt;% function(args) %&gt;% morefunctions(args)</em></li>
+</ul>
+
+<pre><code class="r">cran %&gt;% select(ip_id, country, package, size) %&gt;% # select some columns
+     mutate(size_mb = size / 2^20) %&gt;% # create the size in MB column
+     filter(size_mb &lt;= 0.5) %&gt;% # filter on the created column
+     arrange(desc(size_mb)) %&gt;% # order in descending order
+     head(3) # take only first 3 rows
+</code></pre>
+
+<pre><code>## Source: local data frame [3 x 5]
+## 
+##   ip_id country package   size   size_mb
+##   (int)   (chr)   (chr)  (int)     (dbl)
+## 1 11034      DE    phia 524232 0.4999466
+## 2  9643      US     tis 524152 0.4998703
+## 3  1542      IN RcppSMC 524060 0.4997826
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Tidy vs. Messy Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Principles of tidy data:
+
+<ul>
+<li>Each variable forms a column</li>
+<li>Each observation forms a row</li>
+<li>Each type of observational unit forms a table</li>
+</ul></li>
+<li>If the above is not satisfied, data is &#39;messy&#39;, and needs cleaning</li>
+<li>Most common symptoms of messy data: 
+
+<ol>
+<li>Column headers are values, not variable names</li>
+<li>Multiple variables are stored in one column</li>
+<li>Variables are stored in both rows and columns</li>
+<li>Multiple types of observational units are stored in the same table</li>
+<li>A single observational unit is stored in multiple tables</li>
+</ol></li>
+<li>Solution: <strong>[R package] tidyr</strong></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-14" style="background:;">
+  <hgroup>
+    <h2>R Package: tidyr</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:80%;'>
+  <p>Data cleaning functions:</p>
+
+<ul>
+<li><em>gather()</em>: collapses columns into key-value pairs
+
+<ul>
+<li>Used when some columns are not variables (#1)</li>
+</ul></li>
+<li><em>separate()</em>: splits column values into multiple columns
+
+<ul>
+<li>Used when a column contains more than one variable (#2)</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:20%;'>
+  <div style='text-align: center;'>
+    <img height='300' src='tidyr.png' />
+</div>
+
+</div>
+<div style='float:left;width:100%;'>
+  <ul>
+<li><em>spread()</em>: spreads a key-value pair across multiple columns
+
+<ul>
+<li>Used when variables are stored in both rows and columns (#3)</li>
+</ul></li>
+<li><em>select()</em>: keeps only the variables listed
+
+<ul>
+<li>Used when multiple types of observational units are stored together (#4)</li>
+</ul></li>
+<li><em>bind_rows()</em>: bind multiple tables by row
+
+<ul>
+<li>Used when a single observational unit is stored in multiple tables (#5)</li>
+</ul></li>
+</ul>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-15" style="background:;">
+  <hgroup>
+    <h2>Tidying Data with tidyr: fixing #1 with <em>gather()</em></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>#1: Column headers are values, not variable names, eg.:</p>
+
+<pre><code>##   grade male female
+## 1     A    1      6
+## 2     B    5      2
+</code></pre>
+
+<p>Column names should be: grade, gender, count</p>
+
+<pre><code class="r">gather(students,gender,count,-grade) # gather all columns except grade (already exists)
+</code></pre>
+
+<pre><code>##   grade gender count
+## 1     A   male     1
+## 2     B   male     5
+## 3     A female     6
+## 4     B female     2
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-16" style="background:;">
+  <hgroup>
+    <h2>Tidying Data with tidyr: fixing #2 with <em>separate()</em></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>#2: Multiple variables are stored in one column, eg.:</p>
+
+<pre><code>##   grade gender_class count
+## 1     A       male_1     1
+## 2     A     female_1     2
+## 3     A       male_2     3
+## 4     A     female_2     4
+</code></pre>
+
+<p>Data from two classes listed in one columns, need to be separated:</p>
+
+<pre><code class="r">separate(students2,col=gender_class,into=c(&quot;gender&quot;,&quot;class&quot;)) # separate into two columns
+</code></pre>
+
+<pre><code>##   grade gender class count
+## 1     A   male     1     1
+## 2     A female     1     2
+## 3     A   male     2     3
+## 4     A female     2     4
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-17" style="background:;">
+  <hgroup>
+    <h2>Tidying Data with tidyr: fixing #3 with <em>spread()</em></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>#3: Variables are stored in both rows and columns, eg.:</p>
+
+<pre><code>##    name    test grade
+## 1 Sally midterm     A
+## 2 Sally   final     C
+## 3  Jeff midterm     B
+## 4  Jeff   final     A
+</code></pre>
+
+<p>The test column values should be columns:</p>
+
+<pre><code class="r">spread(students3,test,grade) # turn test column values into column names containing grade
+</code></pre>
+
+<pre><code>##    name final midterm
+## 1  Jeff     A       B
+## 2 Sally     C       A
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-18" style="background:;">
+  <hgroup>
+    <h2>Tidying Data with tidyr: fixing #4 with <em>select()</em></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>#4: Multiple types of observational units are stored in the same table, eg.:</p>
+
+<pre><code>##    id  name gender class midterm final
+## 1 588 Sally      F CS101       A     B
+## 2 588 Sally      F CS201       C     B
+## 3 710  Jeff      M CS101       B     A
+</code></pre>
+
+<p>This looks ok? ... But id, name and gender are repeated - redundancy is bad. <br>
+\(\rightarrow\) Split into two tables with select - keep id column in both as primary key:</p>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <pre><code class="r">select(s4,id,class,midterm,final)
+</code></pre>
+
+<pre><code>##    id class midterm final
+## 1 588 CS101       A     B
+## 2 588 CS201       C     B
+## 3 710 CS101       B     A
+</code></pre>
+
+</div>
+<div style='float:right;width:50%;'>
+  <pre><code class="r">unique(select(s4,id,name,gender))
+</code></pre>
+
+<pre><code>##    id  name gender
+## 1 588 Sally      F
+## 3 710  Jeff      M
+</code></pre>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-19" style="background:;">
+  <hgroup>
+    <h2>Tidying Data with tidyr: fixing #5 with <em>bind_rows()</em></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>#5: A single observational unit is stored in multiple tables, eg. tables &quot;passed&quot; and &quot;failed&quot;:</p>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <pre><code>##    name class grade
+## 1 Sally CS101     A
+## 2  Jeff CS201     A
+</code></pre>
+
+</div>
+<div style='float:right;width:50%;'>
+  <pre><code>##    name class grade
+## 1 Brian CS101     E
+## 2 Kathy CS201     D
+</code></pre>
+
+</div>
+<div style='float:left;width:100%;'>
+  <p>We really want to combine &quot;passed&quot; and &quot;failed&quot; into a single table, with the name of the original table as a new variable:</p>
+
+<pre><code class="r">passed &lt;- mutate(passed,status=&#39;passed&#39;); failed &lt;- mutate(failed,status=&#39;failed&#39;)
+data.frame(bind_rows(passed,failed)) # combine the tables into a single table
+</code></pre>
+
+<pre><code>##    name class grade status
+## 1 Sally CS101     A passed
+## 2  Jeff CS201     A passed
+## 3 Brian CS101     E failed
+## 4 Kathy CS201     D failed
+</code></pre>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-20" style="background:;">
+  <hgroup>
+    <h2>R Package: lubridate</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:80%;'>
+  <ul>
+<li>Date functions:
+
+<ul>
+<li><em>today()</em>: current date</li>
+<li><em>year()</em>, <em>month()</em>, <em>day()</em></li>
+</ul></li>
+<li>Time functions:
+
+<ul>
+<li><em>now()</em>: current date and time</li>
+<li><em>hour()</em>, <em>minute()</em>, <em>second()</em></li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:20%;'>
+  <div style='text-align: center;'>
+    <img height='300' src='lubridate.png' />
+</div>
+
+</div>
+<div style='float:left;width:100%;'>
+  <ul>
+<li>Datetime functions:
+
+<ul>
+<li>Parsing datetimes: <em>ymd()</em>, <em>dmy()</em>, <em>hms()</em>, <em>ymd_hms()</em>, etc.</li>
+<li>Allows use of arithmetic operators on dates and times, eg. <em>now()</em> + <em>days(2)</em></li>
+<li><em>with_tz():</em> timezone conversion</li>
+<li><em>interval(time1,time2):</em> returns how much time there is between given datetimes</li>
+<li><em>stopwatch():</em> start timer until the next use of <em>stopwatch()</em></li>
+</ul></li>
+</ul>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-21" style="background:;">
+  <hgroup>
+    <h2>Recall.. Before Machine Learning</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Recall the steps you should take:</p>
+
+<ol>
+<li><del>Get data</del></li>
+<li><del>Clean and/or anonymize data</del></li>
+<li><strong>Explore data:</strong>
+
+<ul>
+<li><strong>What is in it?</strong></li>
+<li><strong>What is useful? (Any of it? Anonymized beyond recognition?)</strong></li>
+<li><strong>Does it need more cleaning?</strong></li>
+</ul></li>
+<li>Apply statistical methods:
+
+<ul>
+<li>What are the trends in your data?</li>
+<li>What is normal behaviour and what is outlier behaviour?</li>
+</ul></li>
+<li>Fit simple models, eg. regression model</li>
+<li>Apply machine learning algorithms</li>
+<li>Evaluate, repeat if needed</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-22" style="background:;">
+  <hgroup>
+    <h2>Step 3: Exploratory Data Analysis (EDA)</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <p><br></p>
+
+<div style='text-align: center;'>
+    <img height='560' src='datavis.png' />
+</div>
+
+</div>
+<div style='float:right;width:50%;'>
+  <p><br></p>
+
+<blockquote>
+<p>&quot;Exploratory data analysis is an approach to analyzing data sets to summarize their main characteristics, often with visual methods.&quot;</p>
+</blockquote>
+
+<ul>
+<li>Arguably one of the most important aspects of data analysis!</li>
+<li>Often, but not always, through visualizations</li>
+<li>No true &quot;best practice&quot;</li>
+<li>Try things out, look at it, change it</li>
+<li>R is excellent for it</li>
+</ul>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-23" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis in R</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>R has three famous plotting systems:</p>
+
+<ul>
+<li>Base (comes with base R install)</li>
+<li>Lattice (Package)</li>
+<li>Ggplot2 (Package)</li>
+</ul>
+
+<p><br></p>
+
+<p>All have their use, but we will focus on ggplot2:</p>
+
+<ul>
+<li>Based on the &quot;Grammar of Graphics (GG)&quot;</li>
+<li>Easy to use, intuitive</li>
+<li>Nice looking graphs</li>
+<li>Pretty defaults, but still customizable</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-24" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with ggplot2</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:80%;'>
+  <ul>
+<li><p>Plotting in ggplot2 always starts with one of two functions: </p>
+
+<ul>
+<li><em>qplot()</em> (basic workhorse)</li>
+<li><em>ggplot()</em> (more customization)</li>
+</ul></li>
+<li><p>Next, you add the components or building blocks you want:</p>
+
+<ul>
+<li>colour</li>
+<li>shape</li>
+<li>size</li>
+<li>geometric objects (points, lines, bars, ...)</li>
+<li>legend</li>
+<li>etc.</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:20%;'>
+  <div style='text-align: center;'>
+    <img height='300' src='ggplot2.png' />
+</div>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-25" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Very simple scatterplot:</p>
+
+<pre><code class="r">qplot(displ,hwy,data=mpg)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-35-1.png" alt="plot of chunk unnamed-chunk-35"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-26" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Add some colour based on a factor variable by using an aesthetic:</p>
+
+<pre><code class="r">qplot(displ,hwy,data=mpg,color=drv)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-36-1.png" alt="plot of chunk unnamed-chunk-36"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-27" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Add a smoothing function:</p>
+
+<pre><code class="r">qplot(displ,hwy,data=mpg,color=drv,geom=c(&quot;point&quot;,&quot;smooth&quot;))
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-37-1.png" alt="plot of chunk unnamed-chunk-37"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-28" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Boxplot of the same data:</p>
+
+<pre><code class="r">qplot(drv,hwy,data=mpg,geom=&quot;boxplot&quot;)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-38-1.png" alt="plot of chunk unnamed-chunk-38"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-29" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Add a colour based on a factor variable:</p>
+
+<pre><code class="r">qplot(drv,hwy,data=mpg,geom=&quot;boxplot&quot;,color=manufacturer)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-39-1.png" alt="plot of chunk unnamed-chunk-39"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-30" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Histogram of the same data, with a fill colour:</p>
+
+<pre><code class="r">qplot(hwy,data=mpg,fill=drv)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-40-1.png" alt="plot of chunk unnamed-chunk-40"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-31" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>To get a faceted plot, add argument facets with the desired formula as <em>rows ~ columns</em>:</p>
+
+<pre><code class="r">qplot(displ,hwy,data=mpg,facets=.~drv)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-41-1.png" alt="plot of chunk unnamed-chunk-41"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-32" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>To get the facets as rows:</p>
+
+<pre><code class="r">qplot(hwy,data=mpg,facets=drv~.)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-42-1.png" alt="plot of chunk unnamed-chunk-42"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-33" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with qplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Final example combining all of the above:</p>
+
+<pre><code class="r">qplot(displ,hwy,data=mpg,geom=c(&quot;point&quot;,&quot;smooth&quot;),facets=.~drv)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-43-1.png" alt="plot of chunk unnamed-chunk-43"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-34" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with ggplot2</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Before we have a look at the more customizable <em>ggplot()</em> function, we review the most important potential building blocks the package offers us:</p>
+
+<ul>
+<li><strong>Aesthetic mappings <em>(aes)</em>:</strong> determine how data are mapped to color, size, etc.</li>
+<li><strong>Geometric objects <em>(geoms)</em>:</strong> what you see in the plot (points, lines, shapes)</li>
+<li><strong>Facets <em>(facets)</em>:</strong> the panels in panel plots</li>
+</ul>
+
+<p>There are three more, taken care of for you by <em>qplot()</em>, but customizable in <em>ggplot()</em>:</p>
+
+<ul>
+<li><strong>Statistical transformations <em>(stats)</em>:</strong> binning, quantiles, smoothing, ...</li>
+<li><strong>Scales:</strong> the encoding of aesthetic mappings, eg. male = red, female = blue</li>
+<li><strong>Coordinate system</strong></li>
+</ul>
+
+<p><br></p>
+
+<p><strong>If you don&#39;t want to edit these: stick to <em>qplot()</em>, <em>ggplot()</em> is much more verbose!</strong></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-35" style="background:;">
+  <hgroup>
+    <h2>Exploratory Data Analysis with ggplot()</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Just a quick ggplot example (as you see, more verbose):</p>
+
+<pre><code class="r">ggplot(mtcars,aes(factor(am),mpg)) +
+     geom_boxplot(width=.6,aes(fill=factor(am,labels=c(&quot;Automatic&quot;,&quot;Manual&quot;)))) +
+     labs(title=&quot;Boxplot of Miles per Gallon vs. Transmission Type&quot;) +
+     ylab(&quot;Miles per Gallon (MPG)&quot;) + xlab(&quot;Transmission\nType\n&quot;) +
+     scale_x_discrete(labels=c(&quot;0&quot; = &quot;Automatic&quot;, &quot;1&quot; = &quot;Manual&quot;)) +
+     scale_fill_manual(&quot;Transmission Type&quot;,values=c(&quot;Darkblue&quot;,&quot;steelblue&quot;)) +
+     coord_flip()
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-44-1.png" alt="plot of chunk unnamed-chunk-44"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-36" style="background:;">
+  <hgroup>
+    <h2>Recall.. Before Machine Learning</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Recall the steps you should take:</p>
+
+<ol>
+<li><del>Get data</del></li>
+<li><del>Clean and/or anonymize data</del></li>
+<li><del>Explore data</del></li>
+<li><del>Apply statistical methods</del></li>
+<li><del>Fit simple models, eg. regression model</del></li>
+<li><strong>Apply machine learning algorithms</strong></li>
+<li>Evaluate, repeat if needed</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-37" style="background:;">
+  <hgroup>
+    <h2>Machine Learning Basics</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>There are several classes of machine learning algorithms:</p>
+
+<ul>
+<li>Supervised learning</li>
+<li>Unsupervised learning</li>
+<li>Semi-supervised learning</li>
+</ul>
+
+<p><br></p>
+
+<p>Whether or not an algorithm is supervised depends on whether or not it requires the <em>training set</em> to be <em>labeled</em> to create a <em>model</em>.</p>
+
+<ul>
+<li><strong>Training set:</strong> the data used to train a machine learning model</li>
+<li><strong>Label:</strong> the &quot;correct&quot; answer for a training case</li>
+<li><strong>Model:</strong> the output of a machine learning algorithm, used to predict</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-38" style="background:;">
+  <hgroup>
+    <h2>Training, Testing and Validation Set</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><strong>Training set:</strong> A machine learning algorithm needs <em>training data</em> to create a model
+
+<ul>
+<li>Supervised: all data must be labeled</li>
+<li>Unsupervised: labels not needed, allowed but not used</li>
+<li>Semi-supervised: some labeled data needed</li>
+</ul></li>
+<li><strong>Validation set:</strong> 
+
+<ul>
+<li>Repeated tests with the same data leads to overfitting</li>
+<li>Overfitting = tuning our model too much towards the data, not generalizable</li>
+<li>Thus, intermediate testing is done with <em>validation data</em></li>
+<li>Label requirements are as above for evaluation purposes</li>
+</ul></li>
+<li><strong>Testing set:</strong> To evaluate a finished model, we need <em>testing data</em>
+
+<ul>
+<li>Label requirements are as above for evaluation purposes</li>
+<li>In competitions, you will NOT have these labels - they are used for scoring!</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-39" style="background:;">
+  <hgroup>
+    <h2>Training, Testing and Validation Set in R</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>To split into training/testing/validation sets: 
+
+<ul>
+<li><em>caret</em> package</li>
+<li><em>createDataPartition()</em> function</li>
+</ul></li>
+<li>Code example:</li>
+</ul>
+
+<pre><code class="r"># load the iris dataset
+data(iris) 
+
+# define an 80%/20% train/test split of the dataset
+trainIndex &lt;- createDataPartition(iris$Species,p=0.80,list=FALSE)
+data_train &lt;- iris[trainIndex,] ; data_test &lt;- iris[-trainIndex,]
+
+# define a 60%/40% train/validation split on the remaining training data
+trainIndex &lt;- createDataPartition(iris$Species,p=0.60,list=FALSE)
+data_train &lt;- iris[trainIndex,] ; data_valid &lt;- iris[-trainIndex,]
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-40" style="background:;">
+  <hgroup>
+    <h2>Types of Learning Tasks</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Machine learning algorithms have many uses, but mainly:</p>
+
+<ul>
+<li><strong>Classification:</strong> assigning a category to a given observation
+
+<ul>
+<li>Eg. classify email as &quot;spam&quot; or &quot;non-spam&quot;</li>
+<li>Output: the assigned class</li>
+</ul></li>
+<li><strong>Regression:</strong> model the continuous phenomenon that generated the input data
+
+<ul>
+<li>Eg. model the relation between gas-mileage and transmission type</li>
+<li>Output: the model, evaluated in a given point</li>
+</ul></li>
+<li><strong>Forecasting:</strong> generate various predictions, representing what
+might happen over non-specific time-periods in the future
+
+<ul>
+<li>Eg. model the weather for the coming week</li>
+<li>Output: multiple predicted possibilities</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-41" style="background:;">
+  <hgroup>
+    <h2>Machine Learning Algorithms: Overview</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>List of popular (types of) machine learning algorithms:</p>
+
+<ul>
+<li>Decision trees (DT)</li>
+<li>Random forests (RF)</li>
+<li>Rule set learning, aka association rule learning</li>
+<li>Probabilistic models, eg. Bayesian inference</li>
+<li>Instance based learning (IBL)</li>
+<li>Artificial neural networks (ANN)</li>
+<li>Support vector machines (SVMs)</li>
+<li>Clustering
+
+<ul>
+<li>K-Means clustering</li>
+<li>Hierarchical clustering</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-42" style="background:;">
+  <hgroup>
+    <h2>Before We Start... R Package: caret</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Very useful R package for machine learning: <em>caret</em>, contains tools for:</p>
+
+<ul>
+<li>Data splitting</li>
+<li>Pre-processing</li>
+<li>Feature selection</li>
+<li>Model tuning using resampling</li>
+<li>Variable importance estimation</li>
+<li>etc.</li>
+</ul>
+
+<div style='text-align: center;'>
+    <img height='300' src='carrot.png' />
+</div>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-43" style="background:;">
+  <hgroup>
+    <h2>Decision Trees</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Supervised learning, labels needed</li>
+<li>Very popular</li>
+<li>Tree-shaped flowchart structure
+
+<ul>
+<li>Good prediction accuracy</li>
+<li>High interpretability</li>
+</ul></li>
+</ul>
+
+<p><br></p>
+
+<blockquote>
+<p><strong>Usage</strong>: Starting at the root of the tree, a path is constructed to a leaf by computing in each internal node the outcome of its associated test for input <em>x</em>, and following the outgoing edge labeled with that outcome, until a leaf is reached. The value <em>y</em> stored in that leaf is the value to which <em>x</em> is mapped by the tree.</p>
+</blockquote>
+
+</div>
+<div style='float:right;width:50%;'>
+  <p><strong>Example decision tree: rain tomorrow?</strong></p>
+
+<p><img src="assets/fig/unnamed-chunk-46-1.png" alt="plot of chunk unnamed-chunk-46"></p>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-44" style="background:;">
+  <hgroup>
+    <h2>Decision Trees in R with caret</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Train a model using &quot;rpart&quot; (the original decision tree package)</li>
+<li>First argument is of form <em>y ~ x</em>, here: predict &quot;Species&quot; using all other variables, written &quot;.&quot;</li>
+</ul>
+
+<pre><code class="r">model &lt;- train(Species ~ ., data = iris, method = &quot;rpart&quot;)
+</code></pre>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <pre><code class="r">plot(model$finalModel)
+text(model$finalModel)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-50-1.png" alt="plot of chunk unnamed-chunk-50"></p>
+
+</div>
+<div style='float:right;width:50%;'>
+  <pre><code class="r">fancyRpartPlot(model$finalModel, 
+             palettes=c(&#39;Greys&#39;,&#39;Oranges&#39;))
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-52-1.png" alt="plot of chunk unnamed-chunk-52"></p>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-45" style="background:;">
+  <hgroup>
+    <h2>Support Vector Machines (SVMs)</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Supervised learning, labels needed</li>
+<li>Models represent data as points in space</li>
+<li>Different labels should be separated by a gap</li>
+<li>Which side of gap new points are on is used to predict category</li>
+</ul>
+
+<p>Example SVM for linearly separable features:</p>
+
+<p><img src="assets/fig/unnamed-chunk-53-1.png" alt="plot of chunk unnamed-chunk-53"></p>
+
+</div>
+<div style='float:right;width:50%;'>
+  <p>If not separable in linear space, map to higher dimension:</p>
+
+<p><img src="assets/fig/unnamed-chunk-54-1.png" alt="plot of chunk unnamed-chunk-54"><img src="assets/fig/unnamed-chunk-54-2.png" alt="plot of chunk unnamed-chunk-54"></p>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-46" style="background:;">
+  <hgroup>
+    <h2>More Examples: What Type of Flower?</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <p><strong>Predicted class:</strong></p>
+
+<ul>
+<li>Predict class of iris flower</li>
+</ul>
+
+<p><img src="assets/fig/unnamed-chunk-56-1.png" alt="plot of chunk unnamed-chunk-56"></p>
+
+</div>
+<div style='float:right;width:50%;'>
+  <p><strong>Prediction confidence:</strong></p>
+
+<ul>
+<li>How certain are these predictions?</li>
+</ul>
+
+<p><img src="assets/fig/unnamed-chunk-57-1.png" alt="plot of chunk unnamed-chunk-57"></p>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-47" style="background:;">
+  <hgroup>
+    <h2>SVMs in R with caret</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Given this randomly generated data:</p>
+
+<ul>
+<li>Train a model using &quot;svmLinear&quot;, &quot;svmPoly&quot; or &quot;svmRadial&quot;, ...</li>
+<li>First argument is of form <em>y ~ x</em></li>
+<li>Here we use: <em>y ~ .</em> where &quot;.&quot; represents &quot;all available x&quot;</li>
+</ul>
+
+<p><img src="assets/fig/unnamed-chunk-59-1.png" alt="plot of chunk unnamed-chunk-59"></p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><strong>Linear SVM attempt</strong></p>
+
+<pre><code class="r">mL &lt;- train(y~.,data=dat,method=&quot;svmLinear&quot;)
+plot(mL$finalModel)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-61-1.png" alt="plot of chunk unnamed-chunk-61"></p>
+
+<ul>
+<li><strong>Accuracy:</strong> 0.8</li>
+<li>Reason: more red than blue - <strong>Beware!</strong></li>
+</ul>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-48" style="background:;">
+  <hgroup>
+    <h2>SVMs in R with caret</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <p><strong>Polynomial SVM attempt</strong></p>
+
+<pre><code class="r">mP &lt;- train(y~.,data=dat,method=&quot;svmPoly&quot;)
+plot(mP$finalModel)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-64-1.png" alt="plot of chunk unnamed-chunk-64"></p>
+
+<p><strong>Accuracy:</strong> 0.9272727</p>
+
+</div>
+<div style='float:right;width:50%;'>
+  <p><strong>Radial SVM attempt</strong></p>
+
+<pre><code class="r">mR &lt;- train(y~.,data=dat,method=&quot;svmRadial&quot;)
+plot(mR$finalModel)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-67-1.png" alt="plot of chunk unnamed-chunk-67"></p>
+
+<p><strong>Accuracy:</strong> 0.9454545</p>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-49" style="background:;">
+  <hgroup>
+    <h2>Clustering</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Unsupervised learning, NO labels needed</li>
+<li>Grouping data into categories based on some measure of distance or similarity</li>
+<li>Two famous types:
+
+<ul>
+<li>K-means clustering</li>
+<li>Hierarchical clustering</li>
+</ul></li>
+<li>Visualization #1: <strong>dendrogram</strong></li>
+</ul>
+
+<p><img src="assets/fig/unnamed-chunk-69-1.png" alt="plot of chunk unnamed-chunk-69"></p>
+
+</div>
+<div style='float:right;width:50%;'>
+  <ul>
+<li>Visualization #2: <strong>Heatmap</strong> (with/without the added dendrogram)</li>
+</ul>
+
+<p><img src="assets/fig/unnamed-chunk-70-1.png" alt="plot of chunk unnamed-chunk-70"></p>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-50" style="background:;">
+  <hgroup>
+    <h2>Clustering Heatmap Explanation</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-71-1.png" alt="plot of chunk unnamed-chunk-71"><img src="assets/fig/unnamed-chunk-71-2.png" alt="plot of chunk unnamed-chunk-71"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-51" style="background:;">
+  <hgroup>
+    <h2>Clustering Heatmap Explanation</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-72-1.png" alt="plot of chunk unnamed-chunk-72"><img src="assets/fig/unnamed-chunk-72-2.png" alt="plot of chunk unnamed-chunk-72"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-52" style="background:;">
+  <hgroup>
+    <h2>Clustering Heatmap Explanation</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-73-1.png" alt="plot of chunk unnamed-chunk-73"><img src="assets/fig/unnamed-chunk-73-2.png" alt="plot of chunk unnamed-chunk-73"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-53" style="background:;">
+  <hgroup>
+    <h2>Clustering Heatmap Explanation</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-74-1.png" alt="plot of chunk unnamed-chunk-74"><img src="assets/fig/unnamed-chunk-74-2.png" alt="plot of chunk unnamed-chunk-74"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-54" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-75-1.png" alt="plot of chunk unnamed-chunk-75"><img src="assets/fig/unnamed-chunk-75-2.png" alt="plot of chunk unnamed-chunk-75"></p>
+
+<pre><code class="r">distanceMatrix &lt;- dist(dataFrame) # compute distance matrix
+hc &lt;- hclust(distanceMatrix) # cluster based on calculated distances
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-55" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-77-1.png" alt="plot of chunk unnamed-chunk-77"><img src="assets/fig/unnamed-chunk-77-2.png" alt="plot of chunk unnamed-chunk-77"></p>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Cutoff at distance 1.5
+
+<ul>
+<li>Intersects 3 lines in dendrogram</li>
+<li># clusters at this distance: 3</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:50%;'>
+  
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-56" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-78-1.png" alt="plot of chunk unnamed-chunk-78"><img src="assets/fig/unnamed-chunk-78-2.png" alt="plot of chunk unnamed-chunk-78"></p>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Cutoff at distance 1.5
+
+<ul>
+<li>Intersects 3 lines in dendrogram</li>
+<li># clusters at this distance: 3</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:50%;'>
+  <pre><code class="r">cutree(hc, h = 1.5) # cut at height 1.5
+</code></pre>
+
+<pre><code>## 1 1 1 1 2 2 2 2 3 3 3 3
+</code></pre>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-57" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-81-1.png" alt="plot of chunk unnamed-chunk-81"><img src="assets/fig/unnamed-chunk-81-2.png" alt="plot of chunk unnamed-chunk-81"></p>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Cutoff at distance 0.4
+
+<ul>
+<li>Intersects 5 lines in dendrogram</li>
+<li># clusters at this distance: 5</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:50%;'>
+  
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-58" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-82-1.png" alt="plot of chunk unnamed-chunk-82"><img src="assets/fig/unnamed-chunk-82-2.png" alt="plot of chunk unnamed-chunk-82"></p>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Cutoff at distance 0.4
+
+<ul>
+<li>Intersects 5 lines in dendrogram</li>
+<li># clusters at this distance: 5</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:50%;'>
+  <pre><code class="r">cutree(hc, h = 0.4) # cut at height 0.4
+</code></pre>
+
+<pre><code>## 1 2 2 1 3 3 3 4 5 5 5 5
+</code></pre>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-59" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-85-1.png" alt="plot of chunk unnamed-chunk-85"><img src="assets/fig/unnamed-chunk-85-2.png" alt="plot of chunk unnamed-chunk-85"></p>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Cutoff at distance 0.05
+
+<ul>
+<li>Intersects all 12 lines in dendrogram</li>
+<li># clusters at this distance: 12</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:50%;'>
+  
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-60" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-86-1.png" alt="plot of chunk unnamed-chunk-86"><img src="assets/fig/unnamed-chunk-86-2.png" alt="plot of chunk unnamed-chunk-86"></p>
+
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>Cutoff at distance 0.05
+
+<ul>
+<li>Intersects all 12 lines in dendrogram</li>
+<li># clusters at this distance: 12</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:50%;'>
+  <pre><code class="r">cutree(hc, h = 0.05) # cut at height 0.05
+</code></pre>
+
+<pre><code>## 1 2 3 4 5 6 7 8 9 10 11 12
+</code></pre>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-61" style="background:;">
+  <hgroup>
+    <h2>K-Means Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-89-1.png" alt="plot of chunk unnamed-chunk-89"></p>
+
+<ul>
+<li>Assumed number of clusters: 3</li>
+<li>Calculate cluster centroids (= element representing center)</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-62" style="background:;">
+  <hgroup>
+    <h2>K-Means Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-90-1.png" alt="plot of chunk unnamed-chunk-90"></p>
+
+<ul>
+<li>Cluster assignments based on minimal distance to centroids:</li>
+</ul>
+
+<table><thead>
+<tr>
+<th align="left"></th>
+<th align="left">1</th>
+<th align="left">2</th>
+<th align="left">3</th>
+<th align="left">4</th>
+<th align="left">5</th>
+<th align="left">6</th>
+<th align="left">7</th>
+<th align="left">8</th>
+<th align="left">9</th>
+<th align="left">10</th>
+<th align="left">11</th>
+<th align="left">12</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">New_Cluster</td>
+<td align="left">orange</td>
+<td align="left">orange</td>
+<td align="left">orange</td>
+<td align="left">red</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">red</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+</tr>
+</tbody></table>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-63" style="background:;">
+  <hgroup>
+    <h2>K-Means Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-93-1.png" alt="plot of chunk unnamed-chunk-93"></p>
+
+<ul>
+<li><strong>Next:</strong> recalculate cluster centroids</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-64" style="background:;">
+  <hgroup>
+    <h2>K-Means Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-94-1.png" alt="plot of chunk unnamed-chunk-94"></p>
+
+<ul>
+<li>Cluster assignments based on minimal distance to centroids:</li>
+</ul>
+
+<table><thead>
+<tr>
+<th align="left"></th>
+<th align="left">1</th>
+<th align="left">2</th>
+<th align="left">3</th>
+<th align="left">4</th>
+<th align="left">5</th>
+<th align="left">6</th>
+<th align="left">7</th>
+<th align="left">8</th>
+<th align="left">9</th>
+<th align="left">10</th>
+<th align="left">11</th>
+<th align="left">12</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">New_Cluster</td>
+<td align="left">orange</td>
+<td align="left">orange</td>
+<td align="left">orange</td>
+<td align="left">orange</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">red</td>
+<td align="left">red</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+</tr>
+</tbody></table>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-65" style="background:;">
+  <hgroup>
+    <h2>K-Means Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-97-1.png" alt="plot of chunk unnamed-chunk-97"></p>
+
+<ul>
+<li><strong>Next:</strong> recalculate cluster centroids</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-66" style="background:;">
+  <hgroup>
+    <h2>K-Means Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-98-1.png" alt="plot of chunk unnamed-chunk-98"></p>
+
+<ul>
+<li>Cluster assignments based on minimal distance to centroids:</li>
+</ul>
+
+<table><thead>
+<tr>
+<th align="left"></th>
+<th align="left">1</th>
+<th align="left">2</th>
+<th align="left">3</th>
+<th align="left">4</th>
+<th align="left">5</th>
+<th align="left">6</th>
+<th align="left">7</th>
+<th align="left">8</th>
+<th align="left">9</th>
+<th align="left">10</th>
+<th align="left">11</th>
+<th align="left">12</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">New_Cluster</td>
+<td align="left">orange</td>
+<td align="left">orange</td>
+<td align="left">orange</td>
+<td align="left">orange</td>
+<td align="left">red</td>
+<td align="left">red</td>
+<td align="left">red</td>
+<td align="left">red</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+<td align="left">purple</td>
+</tr>
+</tbody></table>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-67" style="background:;">
+  <hgroup>
+    <h2>K-Means Clustering Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-101-1.png" alt="plot of chunk unnamed-chunk-101"></p>
+
+<p><strong>No more points would change cluster: we are done!</strong></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-68" style="background:;">
+  <hgroup>
+    <h2>Data Science Step-by-Step</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Recall the steps you should take:</p>
+
+<ol>
+<li><del>Get data</del></li>
+<li><del>Clean and/or anonymize data</del></li>
+<li><del>Explore data</del></li>
+<li><del>Apply statistical methods</del></li>
+<li><del>Fit simple models, eg. regression model</del></li>
+<li><del>Apply machine learning algorithms</del></li>
+<li><strong>Evaluate, repeat if needed</strong></li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-69" style="background:;">
+  <hgroup>
+    <h2>Evaluation and Comparison of ML Models</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <p><strong>Classification output: class label</strong></p>
+
+<ul>
+<li>Either correct or incorrect</li>
+<li>Common evaluation metrics:
+
+<ul>
+<li>Accuracy: % correct
+
+<ul>
+<li>Confidence intervals</li>
+<li>P-values</li>
+</ul></li>
+<li>True/False Positive/Negative Rate</li>
+<li>Confidence matrix</li>
+<li>Visual:
+
+<ul>
+<li>Heatmap of confidence matrix</li>
+<li>Variable importance plots</li>
+<li>ROC curves</li>
+</ul></li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:50%;'>
+  <p><strong>Regression output: continuous number</strong></p>
+
+<ul>
+<li>Closer to real value = better</li>
+<li>Common evaluation metrics:
+
+<ul>
+<li>Residuals: what model doesn&#39;t explain</li>
+<li>(Adjusted) R-squared: goodness-of-fit</li>
+<li>Standard Error</li>
+<li>Correlation with real value</li>
+<li>Visual:
+
+<ul>
+<li>Residual plots</li>
+<li>Variable importance plots</li>
+</ul></li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-70" style="background:;">
+  <hgroup>
+    <h2>Evaluating Classification in R: Accuracy</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>We use caret: <em>confusionMatrix()</em></li>
+<li>Accuracy best estimated on a validation/test set, eg:</li>
+</ul>
+
+<pre><code class="r">data(iris) # load the iris dataset
+# define an 80%/20% train/test split of the dataset
+trainIndex &lt;- createDataPartition(iris$Species, p=0.80, list=FALSE)
+data_train &lt;- iris[trainIndex,] ; data_test &lt;- iris[-trainIndex,]
+model &lt;- train(Species~., data=data_train, method=&#39;rpart&#39;) # train a model, eg. a decision tree
+predictions &lt;- predict(model, data_test[,1:4]) # make predictions
+cm &lt;- confusionMatrix(predictions, data_test$Species) # summarize results
+cm$overall
+</code></pre>
+
+<pre><code>##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
+##   9.000000e-01   8.500000e-01   7.347115e-01   9.788829e-01   3.333333e-01 
+## AccuracyPValue  McnemarPValue 
+##   1.665006e-10            NaN
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-71" style="background:;">
+  <hgroup>
+    <h2>Evaluating Classification in R: Confusion Matrix</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:50%;'>
+  <ul>
+<li>We use caret: <em>confusionMatrix()</em></li>
+<li><strong>Confusion matrix of course also in here:</strong></li>
+</ul>
+
+<pre><code class="r">cm &lt;- confusionMatrix(predictions, 
+                      data_test$Species)
+cm$table
+</code></pre>
+
+<pre><code>##             Reference
+## Prediction   setosa versicolor virginica
+##   setosa         10          0         0
+##   versicolor      0         10         3
+##   virginica       0          0         7
+</code></pre>
+
+</div>
+<div style='float:right;width:50%;'>
+  <ul>
+<li><strong>Heatmap visualization:</strong></li>
+</ul>
+
+<p><img src="assets/fig/unnamed-chunk-104-1.png" alt="plot of chunk unnamed-chunk-104"></p>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-72" style="background:;">
+  <hgroup>
+    <h2>Evaluating Classification in R: Variable Importance</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Variable Importance Plot &quot;VarImpPlot&quot;</li>
+<li>To evaluate model features&#39; importance
+
+<ul>
+<li>Top right: most important - bottom left: least important</li>
+</ul></li>
+<li>In R: <em>randomForest</em> package, <em>varImpPlot()</em> function</li>
+</ul>
+
+<pre><code class="r">varImpPlot(classModel)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-107-1.png" alt="plot of chunk unnamed-chunk-107"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-73" style="background:;">
+  <hgroup>
+    <h2>Evaluating Classification in R: Evaluation Metrics</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+  
+</div>
+<div style='float:left;width:70%;'>
+  <p><br></p>
+
+<div style='text-align: center;'>
+    <img height='5' src='ROC.png' />
+</div>
+
+</div>
+<div style='float:right;width:30%;'>
+  <p><br>
+<strong>Evaluation metrics:</strong></p>
+
+<ul>
+<li>True positive rate (TPR), aka &quot;Sensitivity&quot;, &quot;Recall&quot;</li>
+<li>True negative rate (TNR), aka &quot;Specificity&quot;</li>
+<li>False positive rate (FPR), aka &quot;Fall-out&quot;, &quot;Type I Error Rate&quot;</li>
+<li>False negative rate (FNR), aka &quot;Miss Rate&quot;, &quot;Type II Error Rate&quot;</li>
+</ul>
+
+</div>
+<div style='float:left;width:100%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-74" style="background:;">
+  <hgroup>
+    <h2>Comparing Classification in R: ROC Curves</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <ul>
+<li>Receiver Operating Characteristic (ROC)</li>
+<li>Evaluate performance of classifier
+
+<ul>
+<li>Y-axis: true positive rate (TPR)</li>
+<li>X-axis: false positive rate (FPR)</li>
+<li>Bigger area under curve (AUC) = better</li>
+</ul></li>
+</ul>
+
+<p><img src="assets/fig/unnamed-chunk-108-1.png" alt="plot of chunk unnamed-chunk-108"></p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <ul>
+<li>ROC curves also excellent for visual model comparison</li>
+<li>Example: </li>
+</ul>
+
+<p><img src="assets/fig/unnamed-chunk-109-1.png" alt="plot of chunk unnamed-chunk-109"></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-75" style="background:;">
+  <hgroup>
+    <h2>Sources</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Code and information adapted from:</p>
+
+<ul>
+<li>H. Blockeel. Machine Learning and Inductive Inference. Acco, Leuven, 2010.</li>
+<li><a href="http://swirlstats.com/">http://swirlstats.com/</a></li>
+<li><a href="http://www.r-bloggers.com/learning-kernels-svm/">http://www.r-bloggers.com/learning-kernels-svm/</a></li>
+<li><a href="http://coreynoone.com/archives/182">http://coreynoone.com/archives/182</a></li>
+<li><a href="https://rpubs.com/ryankelly/svm">https://rpubs.com/ryankelly/svm</a></li>
+<li><a href="http://machinelearningmastery.com/">http://machinelearningmastery.com/</a></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="thank-you-slide segue nobackground" id="slide-76">
+  <aside class="gdbar right"><img src="assets/img/archimiddle.png"></aside>
+  <article class="flexbox vleft auto-fadein">
+    <h2>Thank You</h2>
+    <p>For more information:</p>
+
+  </article>
+
+  <p class="auto-fadein" data-config-contact="">
+    <span>Website</span>&nbsp;&nbsp;<a href="http://www.archimiddle.com">http://www.archimiddle.com</a><br>
+    <span>LinkedIn</span>&nbsp;&nbsp;<a href="https://www.linkedin.com/company/archimiddle">https://www.linkedin.com/company/archimiddle</a><br>
+  </p>
+</slide>
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='NA'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Before Machine Learning'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Steps 1-2: Getting and Cleaning Data'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='R Package: dplyr'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Data Manipulation with dplyr: <em>select()</em> Example'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Data Manipulation with dplyr: <em>filter()</em> Example'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Data Manipulation with dplyr: <em>arrange()</em> Example'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='Data Manipulation with dplyr: <em>mutate()</em> Example'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Data Manipulation with dplyr: <em>summarize()</em> Example'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='Data Grouping with dplyr: <em>group_by()</em> Example'>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='Data Grouping with dplyr: <em>summarize()</em> Example'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='Data Chaining with dplyr: Chaining Operator <em>%&gt;%</em>'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Tidy vs. Messy Data'>
+         13
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=14 title='R Package: tidyr'>
+         14
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=15 title='Tidying Data with tidyr: fixing #1 with <em>gather()</em>'>
+         15
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=16 title='Tidying Data with tidyr: fixing #2 with <em>separate()</em>'>
+         16
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=17 title='Tidying Data with tidyr: fixing #3 with <em>spread()</em>'>
+         17
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=18 title='Tidying Data with tidyr: fixing #4 with <em>select()</em>'>
+         18
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=19 title='Tidying Data with tidyr: fixing #5 with <em>bind_rows()</em>'>
+         19
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=20 title='R Package: lubridate'>
+         20
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=21 title='Recall.. Before Machine Learning'>
+         21
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=22 title='Step 3: Exploratory Data Analysis (EDA)'>
+         22
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=23 title='Exploratory Data Analysis in R'>
+         23
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=24 title='Exploratory Data Analysis with ggplot2'>
+         24
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=25 title='Exploratory Data Analysis with qplot()'>
+         25
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=26 title='Exploratory Data Analysis with qplot()'>
+         26
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=27 title='Exploratory Data Analysis with qplot()'>
+         27
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=28 title='Exploratory Data Analysis with qplot()'>
+         28
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=29 title='Exploratory Data Analysis with qplot()'>
+         29
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=30 title='Exploratory Data Analysis with qplot()'>
+         30
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=31 title='Exploratory Data Analysis with qplot()'>
+         31
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=32 title='Exploratory Data Analysis with qplot()'>
+         32
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=33 title='Exploratory Data Analysis with qplot()'>
+         33
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=34 title='Exploratory Data Analysis with ggplot2'>
+         34
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=35 title='Exploratory Data Analysis with ggplot()'>
+         35
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=36 title='Recall.. Before Machine Learning'>
+         36
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=37 title='Machine Learning Basics'>
+         37
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=38 title='Training, Testing and Validation Set'>
+         38
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=39 title='Training, Testing and Validation Set in R'>
+         39
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=40 title='Types of Learning Tasks'>
+         40
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=41 title='Machine Learning Algorithms: Overview'>
+         41
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=42 title='Before We Start... R Package: caret'>
+         42
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=43 title='Decision Trees'>
+         43
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=44 title='Decision Trees in R with caret'>
+         44
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=45 title='Support Vector Machines (SVMs)'>
+         45
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=46 title='More Examples: What Type of Flower?'>
+         46
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=47 title='SVMs in R with caret'>
+         47
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=48 title='SVMs in R with caret'>
+         48
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=49 title='Clustering'>
+         49
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=50 title='Clustering Heatmap Explanation'>
+         50
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=51 title='Clustering Heatmap Explanation'>
+         51
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=52 title='Clustering Heatmap Explanation'>
+         52
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=53 title='Clustering Heatmap Explanation'>
+         53
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=54 title='Hierarchical Clustering Example'>
+         54
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=55 title='Hierarchical Clustering Example'>
+         55
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=56 title='Hierarchical Clustering Example'>
+         56
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=57 title='Hierarchical Clustering Example'>
+         57
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=58 title='Hierarchical Clustering Example'>
+         58
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=59 title='Hierarchical Clustering Example'>
+         59
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=60 title='Hierarchical Clustering Example'>
+         60
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=61 title='K-Means Clustering Example'>
+         61
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=62 title='K-Means Clustering Example'>
+         62
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=63 title='K-Means Clustering Example'>
+         63
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=64 title='K-Means Clustering Example'>
+         64
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=65 title='K-Means Clustering Example'>
+         65
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=66 title='K-Means Clustering Example'>
+         66
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=67 title='K-Means Clustering Example'>
+         67
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=68 title='Data Science Step-by-Step'>
+         68
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=69 title='Evaluation and Comparison of ML Models'>
+         69
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=70 title='Evaluating Classification in R: Accuracy'>
+         70
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=71 title='Evaluating Classification in R: Confusion Matrix'>
+         71
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=72 title='Evaluating Classification in R: Variable Importance'>
+         72
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=73 title='Evaluating Classification in R: Evaluation Metrics'>
+         73
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=74 title='Comparing Classification in R: ROC Curves'>
+         74
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=75 title='Sources'>
+         75
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=76 title='Thank You'>
+         76
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  <script src="libraries/widgets/bootstrap/js/bootstrap.min.js"></script>
+<script src="libraries/widgets/bootstrap/js/bootbox.min.js"></script>
+
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<script>  
+  $(function (){ 
+    $("#example").popover(); 
+    $("[rel='tooltip']").tooltip(); 
+  });  
+  </script>  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>
+  hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

@@ -1,0 +1,1628 @@
+---
+title       : Introduction to Machine Learning
+subtitle    : Illustrated with R
+author      : Stefanie Verhulst
+logo        : archimiddle.png
+job         : Data Scientist at Archimiddle
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # {tomorrow, github}
+widgets     : [mathjax,bootstrap]     # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+<!-- Limit image width and height for all images -->
+<style type='text/css'>
+img {
+    max-height: 400px;
+}
+</style>
+<style>
+table, th, td {
+    border: 1px solid black;
+}
+</style>
+
+<!-- Center image on slide -->
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+<script type='text/javascript'>
+$(function() {
+    $("p:has(img)").addClass('centered');
+});
+</script>
+<style>
+em {
+  font-style: italic
+}
+</style>
+
+## Part 1: Theoretical Machine Learning
+
+Machine learning:
+* Takes knowledge as input
+* Receives parameter settings
+* ??? (Magic)
+* Produces knowledge as output
+
+> A machine learning system is a function $L$ that, given some input knowledge $I \in \mathcal{I}$ and parameter settings $p \in P$, produces an output called a model or hypothesis $O \in \mathcal{O}$: $$\mathcal{L}: \mathcal{I} \times \mathcal{P} \rightarrow \mathcal{O}$$
+
+
+**BUT FIRST... Get to know your data!**
+
+It is bad practice to apply machine learning on a dataset you don't know!
+
+--- 
+
+## Before Machine Learning
+
+Generally, these are the steps you should take:
+
+1. Get data
+2. Clean and/or anonymize data
+3. Explore data:
+     * What is in it?
+     * What is useful? (Any of it? Anonymized beyond recognition?)
+     * Does it need more cleaning?
+4. Apply statistical methods:
+     * What are the trends in your data?
+     * What is normal behaviour and what is outlier behaviour?
+5. Fit simple models, eg. regression model
+6. Finally: **apply machine learning algorithms!**
+7. Evaluate, repeat if needed
+
+--- &twocoltopbottom7030
+
+## Steps 1-2: Getting and Cleaning Data
+
+Often, *useful* data is hard to come by
+* **Option 1:** work with what you have
+     * Problem: garbage in, garbage out
+* **Option 2:** get better data
+     * Problem: not always possible
+*** =left
+Maybe, we can salvage something from the provided dataset:
+* Data manipulation - **[R package] dplyr**
+* Data grouping and chaining - **[R package] dplyr**
+* Tidying data - **[R package] tidyr**
+* Assemble dates and times - **[R package] lubridate**
+
+*** =right
+<div style='text-align: center;'>
+    <img height='10' src='R.png' />
+</div>
+
+--- &twocoltopbottom8020
+## R Package: dplyr
+*** =left
+* Data manipulation:
+     * *select():* take out some columns
+     * *filter():* take out some rows
+     * *arrange():* order rows by column value
+     * *mutate():* create column from other column value
+     * *summarize():* collapse data using a function, eg. mean()
+*** =right
+<div style='text-align: center;'>
+    <img height='300' src='dplyr.png' />
+</div>
+*** =bottom
+* Data grouping and chaining:
+     * *group_by():* break dataset into groups based on column value
+     * *summarize()* on data grouped by *group_by()*
+     * *%>%*: chaining operator to chain execution of dplyr commands
+
+---
+
+## Data Manipulation with dplyr: *select()* Example
+
+```{r,echo=FALSE,cache=TRUE,message=FALSE}
+library(dplyr)
+path2csv = "C:/Users/verhust/Documents/R/win-library/3.2/swirl/Courses/Getting_and_Cleaning_Data/Manipulating_Data_with_dplyr/2014-07-08.csv"
+mydf <- read.csv(path2csv, stringsAsFactors = FALSE)
+cran <- tbl_df(mydf)
+```
+Example dataset (R package download logs from CRAN for 1 day, $\pm$ 225,000 rows):
+```{r,cache=TRUE,echo=FALSE}
+options(width = 10000)
+head(mydf,3)
+```
+* Load into dplyr, *select()* some of the columns we're interested in:
+```{r,cache=TRUE}
+cranShort <- select(cran, size:version) # Select columns size through version
+```
+```{r,cache=TRUE,echo=FALSE}
+head(data.frame(cranShort),4) # Select columns size through version
+```
+
+---
+
+## Data Manipulation with dplyr: *filter()* Example
+* *filter()* is like *select()*, but it takes rows instead of columns
+* Let's take the rows for the *'dplyr'* package downloads:
+```{r,cache=TRUE,eval=FALSE}
+filter(cranShort, package =='dplyr') # Retain only rows for package dplyr
+```
+```{r,cache=TRUE,echo=FALSE}
+head(data.frame(filter(cranShort, package =='dplyr')),6) # Retain only rows for package dplyr
+```
+
+* Useful *filter()* trick: remove rows with NA's ( = missing values):
+```{r,eval=FALSE,cache=TRUE}
+filter(cranShort, !is.na(r_version)) # Filters out rows where r_version is NA
+```
+
+---
+
+## Data Manipulation with dplyr: *arrange()* Example
+* Order rows of a dataset by column value: *arrange()*
+* Let's use it to order the data by package size:
+
+```{r,eval=FALSE,cache=TRUE}
+arrange(cranShort, size) # Order dataset by size column
+```
+```{r,echo=FALSE,cache=TRUE}
+head(data.frame(arrange(cranShort, size)),2) # Order dataset by size column
+```
+* The same in descending order:
+
+```{r,eval=FALSE,cache=TRUE}
+arrange(cranShort, desc(size)) # Order dataset by size column
+```
+```{r,echo=FALSE,cache=TRUE}
+head(data.frame(arrange(cranShort, desc(size))),3) # Descending order
+```
+
+---
+
+## Data Manipulation with dplyr: *mutate()* Example
+* Create new columns out of (combinations of) other columns: *mutate()*
+* Eg. convert size column, now in bytes, to megabytes and gigabytes:
+
+```{r,eval=FALSE,cache=TRUE}
+# Create column of size in MB and GB
+mutate(cranShort, size_mb = size / 2^20, size_gb = size_mb / 2^10)
+```
+```{r,echo=FALSE,cache=TRUE}
+options(width = 1000)
+# Create column of size in MB and GB
+head(data.frame(mutate(cranShort, size_mb = size / 2^20, size_gb = size_mb / 2^10)),7)
+```
+
+--- 
+
+## Data Manipulation with dplyr: *summarize()* Example
+* *summarize()* can be used to collapse the dataset using a function
+* Let's do this using the mean package size:
+
+```{r,cache=TRUE,eval=FALSE}
+summarize(cran, avg_bytes = mean(size)) # Show the mean of the size column
+```
+```{r,cache=TRUE,echo=FALSE}
+data.frame(summarize(cran, avg_bytes = mean(size))) # Show the mean of the size column
+```
+* Not very interesting ... yet
+
+---
+
+## Data Grouping with dplyr: *group_by()* Example
+* Break the dataset into groups based on column value: *group_by()*
+* Eg. grouping on the *'package'* column:
+
+```{r,eval=FALSE,cache=TRUE}
+group_by(cranShort, package)
+```
+```{r,echo=FALSE,cache=TRUE}
+head(group_by(cranShort, package),3)
+```
+* 'Groups: package' implies a grouping by package occurred, all else is unchanged 
+* **Any operation we apply to the grouped data will take place on a per package basis!**
+
+---
+
+## Data Grouping with dplyr: *summarize()* Example
+* Any operation applied to grouped data takes place on a per group basis
+* Let's try *summarize()* again, but on grouped data:
+
+```{r,eval=FALSE,cache=TRUE}
+summarize(group_by(cranShort, package), avg_bytes = mean(size))
+```
+```{r,echo=FALSE,cache=TRUE}
+head(data.frame(summarize(group_by(cranShort, package), avg_bytes = mean(size))),6)
+```
+Instead of a single value, *summarize()* now returned the mean size for each package!
+
+---
+
+## Data Chaining with dplyr: Chaining Operator *%>%*
+* Chaining operator is syntactic sugar - no added value apart from cleaner code 
+* Format: *dataset %>% function(args) %>% morefunctions(args)*
+
+```{r,cache=TRUE}
+cran %>% select(ip_id, country, package, size) %>% # select some columns
+     mutate(size_mb = size / 2^20) %>% # create the size in MB column
+     filter(size_mb <= 0.5) %>% # filter on the created column
+     arrange(desc(size_mb)) %>% # order in descending order
+     head(3) # take only first 3 rows
+```
+
+---
+## Tidy vs. Messy Data
+* Principles of tidy data:
+     * Each variable forms a column
+     * Each observation forms a row
+     * Each type of observational unit forms a table
+* If the above is not satisfied, data is 'messy', and needs cleaning
+* Most common symptoms of messy data: 
+     1. Column headers are values, not variable names
+     2. Multiple variables are stored in one column
+     3. Variables are stored in both rows and columns
+     4. Multiple types of observational units are stored in the same table
+     5. A single observational unit is stored in multiple tables
+* Solution: **[R package] tidyr**
+
+--- &twocoltopbottom8020
+## R Package: tidyr
+*** =left
+Data cleaning functions:
+* *gather()*: collapses columns into key-value pairs
+     * Used when some columns are not variables (\#1)
+* *separate()*: splits column values into multiple columns
+     * Used when a column contains more than one variable (\#2)
+     
+*** =right
+<div style='text-align: center;'>
+    <img height='300' src='tidyr.png' />
+</div>
+
+*** =bottom
+* *spread()*: spreads a key-value pair across multiple columns
+     * Used when variables are stored in both rows and columns (\#3)
+* *select()*: keeps only the variables listed
+     * Used when multiple types of observational units are stored together (\#4)
+* *bind_rows()*: bind multiple tables by row
+     * Used when a single observational unit is stored in multiple tables (\#5)
+     
+
+---
+
+## Tidying Data with tidyr: fixing \#1 with *gather()*
+\#1: Column headers are values, not variable names, eg.:
+```{r,echo=FALSE,message=FALSE,cache=TRUE}
+library(tidyr)
+grade <- c('A','B')
+male <- c(1,5)
+female <- c(6,2)
+students <- data.frame(grade,male,female)
+students
+```
+Column names should be: grade, gender, count
+```{r,cache=TRUE}
+gather(students,gender,count,-grade) # gather all columns except grade (already exists)
+```
+
+---
+
+## Tidying Data with tidyr: fixing \#2 with *separate()*
+\#2: Multiple variables are stored in one column, eg.:
+```{r,echo=FALSE,message=FALSE}
+grade <- c('A','A','A','A')
+gender_class <- c('male_1','female_1','male_2','female_2')
+count <- c(1,2,3,4)
+students2 <- data.frame(grade,gender_class,count)
+students2
+```
+Data from two classes listed in one columns, need to be separated:
+
+```{r}
+separate(students2,col=gender_class,into=c("gender","class")) # separate into two columns
+```
+
+---
+
+## Tidying Data with tidyr: fixing \#3 with *spread()*
+\#3: Variables are stored in both rows and columns, eg.:
+```{r,echo=FALSE,message=FALSE}
+name <- c("Sally","Sally","Jeff","Jeff")
+test <- c("midterm","final","midterm","final")
+grade <- c("A","C","B","A")
+students3 <- data.frame(name,test,grade)
+students3
+```
+The test column values should be columns:
+
+```{r}
+spread(students3,test,grade) # turn test column values into column names containing grade
+```
+
+--- &twocoltopbottom
+
+## Tidying Data with tidyr: fixing \#4 with *select()*
+\#4: Multiple types of observational units are stored in the same table, eg.:
+
+```{r,echo=FALSE,message=FALSE}
+id <- c(588,588,710)
+name <- c("Sally","Sally","Jeff")
+gender <- c('F','F','M')
+class <- c('CS101', 'CS201', 'CS101')
+midterm <- c("A","C","B")
+final <- c("B","B","A")
+s4 <- data.frame(id,name,gender,class,midterm,final)
+s4
+```
+This looks ok? ... But id, name and gender are repeated - redundancy is bad. <br>
+$\rightarrow$ Split into two tables with select - keep id column in both as primary key:
+
+*** =left
+```{r,cache=TRUE}
+select(s4,id,class,midterm,final)
+```
+
+*** =right
+```{r,cache=TRUE}
+unique(select(s4,id,name,gender))
+```
+
+--- &twocoltopbottom
+
+## Tidying Data with tidyr: fixing \#5 with *bind_rows()*
+\#5: A single observational unit is stored in multiple tables, eg. tables "passed" and "failed":
+
+```{r,echo=FALSE,message=FALSE,results='asis',cache=TRUE}
+name <- c('Sally','Jeff')
+class <- c('CS101', 'CS201')
+grade <- c('A','A')
+passed <- data.frame(name,class,grade)
+name <- c('Brian','Kathy')
+class <- c('CS101', 'CS201')
+grade <- c('E','D')
+failed <- data.frame(name,class,grade)
+#library(knitr)
+#t1 = kable(passed, format='html', output = FALSE)
+#t2 = kable(failed, format='html', output = FALSE)
+#cat(c('<table><tr valign="top"><td>', t1, '</td><td>', t2, '</td><tr></table>'),sep = '')
+```
+
+*** =left
+```{r,echo=FALSE,cache=TRUE}
+passed
+```
+
+*** =right
+```{r,echo=FALSE,cache=TRUE}
+failed
+```
+
+*** =bottom
+We really want to combine "passed" and "failed" into a single table, with the name of the original table as a new variable:
+
+```{r,warning=FALSE,cache=TRUE}
+passed <- mutate(passed,status='passed'); failed <- mutate(failed,status='failed')
+data.frame(bind_rows(passed,failed)) # combine the tables into a single table
+```
+
+--- &twocoltopbottom8020
+## R Package: lubridate
+*** =left
+* Date functions:
+     * *today()*: current date
+     * *year()*, *month()*, *day()*
+* Time functions:
+     * *now()*: current date and time
+     * *hour()*, *minute()*, *second()*
+     
+*** =right
+<div style='text-align: center;'>
+    <img height='300' src='lubridate.png' />
+</div>
+
+*** =bottom
+* Datetime functions:
+     * Parsing datetimes: *ymd()*, *dmy()*, *hms()*, *ymd_hms()*, etc.
+     * Allows use of arithmetic operators on dates and times, eg. *now()* + *days(2)*
+     * *with_tz():* timezone conversion
+     * *interval(time1,time2):* returns how much time there is between given datetimes
+     * *stopwatch():* start timer until the next use of *stopwatch()*
+
+
+
+--- 
+
+## Recall.. Before Machine Learning
+
+Recall the steps you should take:
+
+1. ~~Get data~~
+2. ~~Clean and/or anonymize data~~
+3. **Explore data:**
+     * **What is in it?**
+     * **What is useful? (Any of it? Anonymized beyond recognition?)**
+     * **Does it need more cleaning?**
+4. Apply statistical methods:
+     * What are the trends in your data?
+     * What is normal behaviour and what is outlier behaviour?
+5. Fit simple models, eg. regression model
+6. Apply machine learning algorithms
+7. Evaluate, repeat if needed
+
+--- &twocoltopbottom
+## Step 3: Exploratory Data Analysis (EDA)
+
+*** =left
+<br>
+
+<div style='text-align: center;'>
+    <img height='560' src='datavis.png' />
+</div>
+*** =right
+<br>
+
+> "Exploratory data analysis is an approach to analyzing data sets to summarize their main characteristics, often with visual methods."
+
+
+* Arguably one of the most important aspects of data analysis!
+* Often, but not always, through visualizations
+* No true "best practice"
+* Try things out, look at it, change it
+* R is excellent for it
+
+
+
+---
+## Exploratory Data Analysis in R
+R has three famous plotting systems:
+* Base (comes with base R install)
+* Lattice (Package)
+* Ggplot2 (Package)
+
+<br>
+
+All have their use, but we will focus on ggplot2:
+* Based on the "Grammar of Graphics (GG)"
+* Easy to use, intuitive
+* Nice looking graphs
+* Pretty defaults, but still customizable
+
+--- &twocoltopbottom8020
+## Exploratory Data Analysis with ggplot2
+*** =left
+* Plotting in ggplot2 always starts with one of two functions: 
+     * *qplot()* (basic workhorse)
+     * *ggplot()* (more customization)
+     
+* Next, you add the components or building blocks you want:
+     * colour
+     * shape
+     * size
+     * geometric objects (points, lines, bars, ...)
+     * legend
+     * etc.
+     
+*** =right
+<div style='text-align: center;'>
+    <img height='300' src='ggplot2.png' />
+</div>
+
+---
+## Exploratory Data Analysis with qplot()
+```{r,message=FALSE,echo=FALSE,global.par=TRUE}
+par(bg=NA) 
+library(ggplot2)
+```
+Very simple scatterplot:
+```{r, fig.width=15, fig.height=6,cache=TRUE}
+qplot(displ,hwy,data=mpg)
+```
+
+---
+## Exploratory Data Analysis with qplot()
+Add some colour based on a factor variable by using an aesthetic:
+```{r, fig.width=15, fig.height=6,cache=TRUE}
+qplot(displ,hwy,data=mpg,color=drv)
+```
+
+---
+## Exploratory Data Analysis with qplot()
+Add a smoothing function:
+```{r, fig.width=15, fig.height=6,cache=TRUE}
+qplot(displ,hwy,data=mpg,color=drv,geom=c("point","smooth"))
+```
+
+---
+## Exploratory Data Analysis with qplot()
+Boxplot of the same data:
+```{r,cache=TRUE}
+qplot(drv,hwy,data=mpg,geom="boxplot")
+```
+
+---
+## Exploratory Data Analysis with qplot()
+Add a colour based on a factor variable:
+```{r, fig.width=15, fig.height=6,cache=TRUE}
+qplot(drv,hwy,data=mpg,geom="boxplot",color=manufacturer)
+```
+
+---
+## Exploratory Data Analysis with qplot()
+Histogram of the same data, with a fill colour:
+```{r,message=FALSE, fig.width=10, fig.height=6,cache=TRUE}
+qplot(hwy,data=mpg,fill=drv)
+```
+
+---
+## Exploratory Data Analysis with qplot()
+To get a faceted plot, add argument facets with the desired formula as *rows ~ columns*:
+```{r,message=FALSE, fig.width=15, fig.height=6,cache=TRUE}
+qplot(displ,hwy,data=mpg,facets=.~drv)
+```
+
+---
+## Exploratory Data Analysis with qplot()
+To get the facets as rows:
+```{r,message=FALSE, fig.width=15, fig.height=6,cache=TRUE}
+qplot(hwy,data=mpg,facets=drv~.)
+```
+
+---
+## Exploratory Data Analysis with qplot()
+Final example combining all of the above:
+```{r,message=FALSE, fig.width=15, fig.height=6,cache=TRUE}
+qplot(displ,hwy,data=mpg,geom=c("point","smooth"),facets=.~drv)
+```
+
+
+---
+## Exploratory Data Analysis with ggplot2
+Before we have a look at the more customizable *ggplot()* function, we review the most important potential building blocks the package offers us:
+* **Aesthetic mappings *(aes)*:** determine how data are mapped to color, size, etc.
+* **Geometric objects *(geoms)*:** what you see in the plot (points, lines, shapes)
+* **Facets *(facets)*:** the panels in panel plots
+
+There are three more, taken care of for you by *qplot()*, but customizable in *ggplot()*:
+* **Statistical transformations *(stats)*:** binning, quantiles, smoothing, ...
+* **Scales:** the encoding of aesthetic mappings, eg. male = red, female = blue
+* **Coordinate system**
+
+<br>
+
+**If you don't want to edit these: stick to *qplot()*, *ggplot()* is much more verbose!**
+
+---
+## Exploratory Data Analysis with ggplot()
+Just a quick ggplot example (as you see, more verbose):
+```{r,message=FALSE, fig.width=15, fig.height=3,cache=TRUE}
+ggplot(mtcars,aes(factor(am),mpg)) +
+     geom_boxplot(width=.6,aes(fill=factor(am,labels=c("Automatic","Manual")))) +
+     labs(title="Boxplot of Miles per Gallon vs. Transmission Type") +
+     ylab("Miles per Gallon (MPG)") + xlab("Transmission\nType\n") +
+     scale_x_discrete(labels=c("0" = "Automatic", "1" = "Manual")) +
+     scale_fill_manual("Transmission Type",values=c("Darkblue","steelblue")) +
+     coord_flip()
+```
+
+--- 
+
+## Recall.. Before Machine Learning
+
+Recall the steps you should take:
+
+1. ~~Get data~~
+2. ~~Clean and/or anonymize data~~
+3. ~~Explore data~~
+4. ~~Apply statistical methods~~
+5. ~~Fit simple models, eg. regression model~~
+6. **Apply machine learning algorithms**
+7. Evaluate, repeat if needed
+
+---
+## Machine Learning Basics
+There are several classes of machine learning algorithms:
+* Supervised learning
+* Unsupervised learning
+* Semi-supervised learning
+
+<br>
+
+Whether or not an algorithm is supervised depends on whether or not it requires the *training set* to be *labeled* to create a *model*.
+* **Training set:** the data used to train a machine learning model
+* **Label:** the "correct" answer for a training case
+* **Model:** the output of a machine learning algorithm, used to predict
+
+---
+## Training, Testing and Validation Set
+* **Training set:** A machine learning algorithm needs *training data* to create a model
+     * Supervised: all data must be labeled
+     * Unsupervised: labels not needed, allowed but not used
+     * Semi-supervised: some labeled data needed
+* **Validation set:** 
+     * Repeated tests with the same data leads to overfitting
+     * Overfitting = tuning our model too much towards the data, not generalizable
+     * Thus, intermediate testing is done with *validation data*
+     * Label requirements are as above for evaluation purposes
+* **Testing set:** To evaluate a finished model, we need *testing data*
+     * Label requirements are as above for evaluation purposes
+     * In competitions, you will NOT have these labels - they are used for scoring!
+
+---
+## Training, Testing and Validation Set in R
+* To split into training/testing/validation sets: 
+     * *caret* package
+     * *createDataPartition()* function
+* Code example:
+
+```{r,cache=TRUE}
+# load the iris dataset
+data(iris) 
+
+# define an 80%/20% train/test split of the dataset
+trainIndex <- createDataPartition(iris$Species,p=0.80,list=FALSE)
+data_train <- iris[trainIndex,] ; data_test <- iris[-trainIndex,]
+
+# define a 60%/40% train/validation split on the remaining training data
+trainIndex <- createDataPartition(iris$Species,p=0.60,list=FALSE)
+data_train <- iris[trainIndex,] ; data_valid <- iris[-trainIndex,]
+```
+
+---
+## Types of Learning Tasks
+Machine learning algorithms have many uses, but mainly:
+* **Classification:** assigning a category to a given observation
+     * Eg. classify email as "spam" or "non-spam"
+     * Output: the assigned class
+* **Regression:** model the continuous phenomenon that generated the input data
+     * Eg. model the relation between gas-mileage and transmission type
+     * Output: the model, evaluated in a given point
+* **Forecasting:** generate various predictions, representing what
+might happen over non-specific time-periods in the future
+     * Eg. model the weather for the coming week
+     * Output: multiple predicted possibilities
+
+---
+## Machine Learning Algorithms: Overview
+List of popular (types of) machine learning algorithms:
+* Decision trees (DT)
+* Random forests (RF)
+* Rule set learning, aka association rule learning
+* Probabilistic models, eg. Bayesian inference
+* Instance based learning (IBL)
+* Artificial neural networks (ANN)
+* Support vector machines (SVMs)
+* Clustering
+     * K-Means clustering
+     * Hierarchical clustering
+
+---
+## Before We Start... R Package: caret
+Very useful R package for machine learning: *caret*, contains tools for:
+* Data splitting
+* Pre-processing
+* Feature selection
+* Model tuning using resampling
+* Variable importance estimation
+* etc.
+
+<div style='text-align: center;'>
+    <img height='300' src='carrot.png' />
+</div>
+
+--- &twocoltopbottom
+## Decision Trees
+
+*** =left
+* Supervised learning, labels needed
+* Very popular
+* Tree-shaped flowchart structure
+     * Good prediction accuracy
+     * High interpretability
+
+<br>
+
+> **Usage**: Starting at the root of the tree, a path is constructed to a leaf by computing in each internal node the outcome of its associated test for input *x*, and following the outgoing edge labeled with that outcome, until a leaf is reached. The value *y* stored in that leaf is the value to which *x* is mapped by the tree.
+
+*** =right
+**Example decision tree: rain tomorrow?**
+
+```{r,echo=FALSE,message=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+library(rpart)
+library(rattle)
+set.seed(42)
+par(bg=NA,mai=c(1,0,0,0))
+ds     <- weather
+target <- "RainTomorrow"
+risk   <- "RISK_MM"
+ignore <- c("Date", "Location", risk)
+vars   <- setdiff(names(ds), ignore)
+nobs   <- nrow(ds)
+form   <- formula(paste(target, "~ ."))
+train  <- sample(nobs, 0.7*nobs)
+test   <- setdiff(seq_len(nobs), train)
+actual <- ds[test, target]
+risks  <- ds[test, risk]
+# Build the model.
+model <- rpart(form, data=ds[train, vars])
+## Plot the model.
+#fancyRpartPlot(model)
+## Choose different colours
+fancyRpartPlot(model, palettes=c("Greys", "Oranges"))
+```
+
+---&twocoltopbottom
+## Decision Trees in R with caret
+```{r,echo=FALSE,message=FALSE}
+library(caret)
+data(iris)
+```
+* Train a model using "rpart" (the original decision tree package)
+* First argument is of form *y ~ x*, here: predict "Species" using all other variables, written "."
+
+```{r,cache=TRUE}
+model <- train(Species ~ ., data = iris, method = "rpart")
+```
+
+*** =left
+```{r,fig.width=7,fig.height=4,cache=TRUE,eval=FALSE}
+plot(model$finalModel)
+text(model$finalModel)
+```
+```{r,fig.width=7,fig.height=4,cache=TRUE,echo=FALSE}
+par(bg=NA,mai=c(0,0,0,0))
+plot(model$finalModel,margin=0.1)
+text(model$finalModel)
+```
+
+*** =right
+```{r,fig.width=7,fig.height=4,cache=TRUE,eval=FALSE}
+fancyRpartPlot(model$finalModel, 
+             palettes=c('Greys','Oranges'))
+```
+```{r,fig.width=7,fig.height=4,cache=TRUE,echo=FALSE}
+par(bg=NA)
+fancyRpartPlot(model$finalModel, 
+             palettes=c('Greys','Oranges'))
+```
+
+--- &twocoltopbottom
+## Support Vector Machines (SVMs)
+
+*** =left
+* Supervised learning, labels needed
+* Models represent data as points in space
+* Different labels should be separated by a gap
+* Which side of gap new points are on is used to predict category
+
+Example SVM for linearly separable features:
+
+```{r,echo=FALSE,message=FALSE,fig.width=6,fig.height=4,cache=TRUE,warning=FALSE}
+par(bg=NA)
+kfunction <- function(linear =0, quadratic=0)
+{
+  k <- function (x,y)
+ {
+     linear*sum((x)*(y)) + quadratic*sum((x^2)*(y^2))
+  }
+  class(k) <- "kernel"
+  k
+}
+ 
+n = 25
+a1 = rnorm(n)
+a2 = 1 - a1 + 2* runif(n)
+b1 = rnorm(n)
+b2 = -1 - b1 - 2*runif(n)
+x = rbind(matrix(cbind(a1,a2),,2),matrix(cbind(b1,b2),,2))
+y <- matrix(c(rep(1,n),rep(-1,n)))
+                       
+svp <- ksvm(x,y,type="C-svc",C = 100, kernel=kfunction(1,0),scaled=c())
+plot(c(min(x[,1]), max(x[,1])),c(min(x[,2]), max(x[,2])),type='n',xlab='x1',ylab='x2')
+title(main='Linearly Separable Features')
+ymat <- ymatrix(svp)
+points(x[-SVindex(svp),1], x[-SVindex(svp),2],pch = ifelse(ymat[-SVindex(svp)] < 0, 16, 17), col = ifelse(ymat[-SVindex(svp)] < 0, "darkgreen", "purple"))
+points(x[SVindex(svp),1], x[SVindex(svp),2],pch = ifelse(ymat[SVindex(svp)] < 0, 1, 2), col = ifelse(ymat[SVindex(svp)] < 0, "green", "pink"))
+    
+# Extract w and b from the model   
+w <- colSums(coef(svp)[[1]] * x[SVindex(svp),])
+b <- b(svp)
+    
+# Draw the lines
+abline(b/w[2],-w[1]/w[2])
+abline((b+1)/w[2],-w[1]/w[2],lty=2)
+abline((b-1)/w[2],-w[1]/w[2],lty=2)
+```
+
+*** =right
+
+If not separable in linear space, map to higher dimension:
+
+```{r,echo=FALSE,message=FALSE,fig.width=7.2,fig.height=12,cache=TRUE,warning=FALSE}
+require('kernlab')
+par(bg=NA)
+kfunction <- function(linear =0, quadratic=0)
+{
+  k <- function (x,y)
+ {
+     linear*sum((x)*(y)) + quadratic*sum((x^2)*(y^2))
+  }
+  class(k) <- "kernel"
+  k
+}
+ 
+n = 20
+r = runif(n)
+a = 2*pi*runif(n)
+a1 = r*sin(a)
+a2 = r*cos(a)
+r = 2+runif(n)
+a = 2*pi*runif(n)
+b1 = r*sin(a)
+b2 = r*cos(a)
+x = rbind(matrix(cbind(a1,a2),,2),matrix(cbind(b1,b2),,2))
+y <- matrix(c(rep(1,n),rep(-1,n)))
+                           
+svp <- ksvm(x,y,type="C-svc",C = 100, kernel=kfunction(0,1),scaled=c())
+#par(mfrow=c(2,1))
+plot(c(min(x[,1]), max(x[,1])),c(min(x[,2]), max(x[,2])),type='n',xlab='x1',ylab='x2')
+title(main='Not Linearly Separable')
+ymat <- ymatrix(svp)
+points(x[-SVindex(svp),1], x[-SVindex(svp),2], cex=2,pch = ifelse(ymat[-SVindex(svp)] < 0, 16, 17),col = ifelse(ymat[-SVindex(svp)] < 0, "darkgreen", "purple"))
+points(x[SVindex(svp),1], x[SVindex(svp),2], cex=2,pch = ifelse(ymat[SVindex(svp)] < 0, 1, 2),col = ifelse(ymat[SVindex(svp)] < 0, "green", "pink"))
+    
+# Extract w and b from the model   
+w2 <- colSums(coef(svp)[[1]] * x[SVindex(svp),]^2)
+b <- b(svp)
+ 
+x1 = seq(min(x[,1]),max(x[,1]),0.01)
+x2 = seq(min(x[,2]),max(x[,2]),0.01)
+ 
+points(-sqrt((b-w2[1]*x2^2)/w2[2]), x2, pch = 16 , cex = .1 )
+points(sqrt((b-w2[1]*x2^2)/w2[2]), x2, pch = 16 , cex = .1 )
+points(x1, sqrt((b-w2[2]*x1^2)/w2[1]), pch = 16 , cex = .1 )
+points(x1,  -sqrt((b-w2[2]*x1^2)/w2[1]), pch = 16, cex = .1 )
+ 
+points(-sqrt((1+ b-w2[1]*x2^2)/w2[2]) , x2, pch = 16 , cex = .1 )
+points( sqrt((1 + b-w2[1]*x2^2)/w2[2]) , x2,  pch = 16 , cex = .1 )
+points( x1 , sqrt(( 1 + b -w2[2]*x1^2)/w2[1]), pch = 16 , cex = .1 )
+points( x1 , -sqrt(( 1 + b -w2[2]*x1^2)/w2[1]), pch = 16, cex = .1 )
+ 
+points(-sqrt((-1+ b-w2[1]*x2^2)/w2[2]) , x2, pch = 16 , cex = .1 )
+points( sqrt((-1 + b-w2[1]*x2^2)/w2[2]) , x2,  pch = 16 , cex = .1 )
+points( x1 , sqrt(( -1 + b -w2[2]*x1^2)/w2[1]), pch = 16 , cex = .1 )
+points( x1 , -sqrt(( -1 + b -w2[2]*x1^2)/w2[1]), pch = 16, cex = .1 )
+ 
+xsq <- x^2
+svp <- ksvm(xsq,y,type="C-svc",C = 100, kernel=kfunction(1,0),scaled=c())
+ 
+plot(c(min(xsq[,1]), max(xsq[,1])),c(min(xsq[,2]), max(xsq[,2])),type='n',xlab='x1^2',ylab='x2^2')
+title(main='Mapped to Quadratic Kernel Space')
+ymat <- ymatrix(svp)
+points(xsq[-SVindex(svp),1], xsq[-SVindex(svp),2],cex=2, pch = ifelse(ymat[-SVindex(svp)] < 0, 16, 17),col = ifelse(ymat[-SVindex(svp)] < 0, "darkgreen", "purple"))
+points(xsq[SVindex(svp),1], xsq[SVindex(svp),2], cex=2,pch = ifelse(ymat[SVindex(svp)] < 0, 1, 2),col = ifelse(ymat[SVindex(svp)] < 0, "green", "pink"))
+    
+# Extract w and b from the model   
+w <- colSums(coef(svp)[[1]] * xsq[SVindex(svp),])
+b <- b(svp)
+    
+# Draw the lines
+abline(b/w[2],-w[1]/w[2])
+abline((b+1)/w[2],-w[1]/w[2],lty=2)
+abline((b-1)/w[2],-w[1]/w[2],lty=2)
+```
+
+--- &twocoltopbottom
+## More Examples: What Type of Flower?
+```{r,echo=FALSE,message=FALSE,cache=FALSE}
+library(kernlab)
+library(gplots)
+```
+*** =left 
+**Predicted class:**
+* Predict class of iris flower
+
+```{r,echo=FALSE,message=FALSE,fig.width=7,fig.height=6,cache=TRUE}
+iris2 <- iris
+iris2$Species[iris$Species=='versicolor'] <- 'virginica'
+iris2$Species <- factor(iris2$Species)
+# Instantiate and fit
+clf2 <- ksvm(Species~Sepal.Length+Sepal.Width,data=iris2,type='C-svc',C=1,kernel='rbf',prob.model=T)
+# Create plot
+iris2$Color <- 'red'; iris2$Pch <- 2
+iris2$Color[iris2$Species=='virginica'] <- 'blue'
+iris2$Pch[iris2$Species=='virginica'] <- 1
+par(mai=c(.82,0.8,0.8,0.4),bg=NA)
+plot(clf2,data=iris2)
+```
+
+*** =right 
+**Prediction confidence:**
+* How certain are these predictions?
+
+```{r,echo=FALSE,message=FALSE,fig.width=7,fig.height=6,cache=TRUE}
+# Predict (maximum) probabilities for plot
+y <- seq(4,8,by=0.05)
+x <- seq(1.5,4.5,by=0.05)
+xy <- expand.grid(x,y)
+names(xy) <- c('Sepal.Width','Sepal.Length')
+p <- apply(predict(clf2,xy,type='prob'),1,max)
+p <- matrix(p,length(x),length(y))
+par(mai=c(.82,0.8,0.8,0.4),bg=NA)
+jet.colors <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+filled.contour(x,y,p,ylab='Sepal Length',xlab='Sepal Width',
+               color.palette=jet.colors,main="SVM Prediction Confidence",
+ plot.axes={points(iris2$Sepal.Width,iris2$Sepal.Length,
+                   pch=iris2$Pch);axis(1);axis(2)})
+```
+```{r,echo=FALSE,message=FALSE,fig.width=5,fig.height=4,cache=TRUE,eval=FALSE}
+# Instantiate and fit
+clf <- ksvm(Species~Sepal.Length+Sepal.Width,data=iris,type='C-svc',C=1,kernel='rbf',prob.model=T)
+# Predict (maximum) probabilities for plot
+x <- seq(4,8,by=0.05)
+y <- seq(1.5,4.5,by=0.05)
+xy <- expand.grid(x,y)
+names(xy) <- c('Sepal.Length','Sepal.Width')
+p <- apply(predict(clf,xy,type='prob'),1,max)
+p <- matrix(p,length(x),length(y))
+# Create plot
+par(mai=c(.75,0.8,0.8,0.4))
+iris$Color <- 'red'
+iris$Color[iris$Species=='versicolor'] <- 'green'
+iris$Color[iris$Species=='virginica'] <- 'blue'
+jet.colors <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+filled.contour(x,y,p,xlab='Sepal Length',ylab='Sepal Width',
+               color.palette=jet.colors,
+ plot.axes={points(iris$Sepal.Length,iris$Sepal.Width,
+                   col=iris$Color,bg=iris$Color,pch=21);axis(1);axis(2)})
+```
+
+--- &twocol
+## SVMs in R with caret
+*** =left
+Given this randomly generated data:
+* Train a model using "svmLinear", "svmPoly" or "svmRadial", ...
+* First argument is of form *y ~ x*
+* Here we use: *y ~ .* where "." represents "all available x"
+
+```{r,echo=FALSE,message=FALSE,cache=TRUE,fig.width=6,fig.height=4}
+library(pROC)
+library(tidyr)
+library(caret)
+# Generate some test data
+set.seed(1)
+x <- matrix(rnorm(200*2), ncol=2)
+x[1:100,]=x[1:100,]+2
+x[101:150,]=x[101:150,]-2
+y <- c(rep("c1",150),rep("c2",50))
+dat <- data.frame(x1=x[,1],x2=x[,2],y=as.factor(y))
+par(mai=c(0,0,0,0),bg=NA)
+plot(x, pch=ifelse(extract_numeric(y)==1, 17, 16),col=ifelse(extract_numeric(y)==1, "red", "darkblue"),xlab="",ylab="", xaxs = "i", yaxs = "i",xaxt='n',yaxt='n', axes=FALSE, frame.plot=TRUE)
+ctr <- trainControl(method='cv',number=10, 
+                    classProbs=TRUE,summaryFunction=twoClassSummary)
+train <- sample(200, 100)
+dat = dat[train,]
+```
+*** =right
+**Linear SVM attempt**
+```{r,fig.width=7,fig.height=4,cache=TRUE,warning=FALSE,message=FALSE,results='hide',eval=FALSE}
+mL <- train(y~.,data=dat,method="svmLinear")
+plot(mL$finalModel)
+```
+```{r,fig.width=7,fig.height=4,cache=TRUE,warning=FALSE,message=FALSE,results='hide',echo=FALSE}
+par(bg=NA,mai=c(.8,0.8,0.7,0.4))
+mL <- train(y~.,data=dat,method="svmLinear")
+plot(mL$finalModel)
+```
+```{r,cache=TRUE,warning=FALSE,message=FALSE,results='hide',echo=FALSE}
+yhat.c <- predict(mL, dat[-train,])
+cmL <-confusionMatrix(yhat.c, dat[-train,'y'])
+```
+* **Accuracy:** `r cmL$overall[1]`
+* Reason: more red than blue - **Beware!**
+
+--- &twocoltopbottom
+## SVMs in R with caret
+
+*** =left
+**Polynomial SVM attempt**
+```{r,fig.width=8,fig.height=5.5,cache=TRUE,warning=FALSE,results='hide',eval=FALSE}
+mP <- train(y~.,data=dat,method="svmPoly")
+plot(mP$finalModel)
+```
+```{r,fig.width=8,fig.height=5.5,cache=TRUE,warning=FALSE,results='hide',echo=FALSE}
+par(bg=NA,mai=c(.8,0.8,0.7,0.4))
+mP <- train(y~.,data=dat,method="svmPoly")
+plot(mP$finalModel)
+```
+```{r,cache=TRUE,warning=FALSE,message=FALSE,results='hide',echo=FALSE}
+yhat.c <- predict(mP, dat[-train,])
+cmP <-confusionMatrix(yhat.c, dat[-train,'y'])
+```
+**Accuracy:** `r cmP$overall[1]`
+*** =right
+**Radial SVM attempt**
+```{r,fig.width=8,fig.height=5.5,cache=TRUE,warning=FALSE,results='hide',eval=FALSE}
+mR <- train(y~.,data=dat,method="svmRadial")
+plot(mR$finalModel)
+```
+```{r,fig.width=8,fig.height=5.5,cache=TRUE,warning=FALSE,results='hide',echo=FALSE}
+par(bg=NA,mai=c(.8,0.8,0.7,0.4))
+mR <- train(y~.,data=dat,method="svmRadial")
+plot(mR$finalModel)
+```
+```{r,cache=TRUE,warning=FALSE,message=FALSE,results='hide',echo=FALSE}
+yhat.c <- predict(mR, dat[-train,])
+cmR <-confusionMatrix(yhat.c, dat[-train,'y'])
+```
+**Accuracy:** `r cmR$overall[1]`
+
+--- &twocoltopbottom
+## Clustering
+
+*** =left
+* Unsupervised learning, NO labels needed
+* Grouping data into categories based on some measure of distance or similarity
+* Two famous types:
+     * K-means clustering
+     * Hierarchical clustering
+* Visualization #1: **dendrogram**
+
+```{r,echo=FALSE,message=FALSE,fig.width=8,fig.height=4,cache=TRUE}
+mt <- as.matrix(mtcars)
+mt <- mt[22:32,1:6]
+par(mai=c(0.5,0,0,1.3),bg=NA)
+plot(as.dendrogram(hclust(dist(mt))),horiz=TRUE)
+```
+
+
+*** =right
+* Visualization #2: **Heatmap** (with/without the added dendrogram)
+
+```{r,echo=FALSE,message=FALSE,fig.width=8,fig.height=10,cache=TRUE}
+mt <- as.matrix(mtcars)
+mt <- mt[22:32,1:6]
+heatmap.2(mt,tracecol=NA,margins=c(8,9.5))
+```
+
+---
+## Clustering Heatmap Explanation
+
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE,message=FALSE}
+library(gplots)
+x = c(0.7585869, 1.0554858, 1.2168882, 0.5308605, 2.0858249, 2.1012112, 1.8850520, 1.8906736, 2.8871096, 2.8219924, 2.9045615, 2.8003227)
+y = c(0.8447492, 1.0128918, 1.1918988, 0.9779429, 1.8977981, 1.8177609, 1.8325657, 2.4831670, 1.0268176, 0.9018628, 0.9118904, 1.0919179)
+dataFrame = data.frame(x,y)
+x2 = c(2.0858249, 2.1012112, 1.8850520, 1.8906736, 0.7585869, 1.0554858, 1.2168882, 0.5308605, 2.8871096, 2.8219924, 2.9045615, 2.8003227)
+dataFrame2 = data.frame(x2,y)
+plot(dataFrame2,pch=16,col="blue",cex=1.5)
+text(dataFrame2$x-.05,dataFrame2$y)
+heatmap.2(t(data.matrix(dataFrame2)),tracecol=NA,dendrogram="column")
+```
+
+---
+## Clustering Heatmap Explanation
+
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+plot(dataFrame2,pch=16,col="blue",cex=1.5)
+text(dataFrame2$x-.05,dataFrame2$y)
+abline(v=1.5,lwd=3,col="green")
+heatmap.2(t(data.matrix(dataFrame2)),tracecol=NA,dendrogram="column",
+          add.expr = segments(x0=4.5,y0=1.5,y1=3,lwd=3,col="green"))
+```
+
+---
+## Clustering Heatmap Explanation
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+plot(dataFrame2,pch=16,col="blue",cex=1.5)
+text(dataFrame2$x-.05,dataFrame2$y)
+abline(v=1.5,lwd=3,col="green")
+abline(v=2.5,lwd=3,col="purple")
+heatmap.2(t(data.matrix(dataFrame2)),tracecol=NA,dendrogram="column",
+          add.expr = c(segments(x0=4.5,y0=1.5,y1=3,lwd=3,col="green"),
+                       segments(x0=8.5,y0=1.5,y1=3,lwd=3,col="purple")))
+```
+
+---
+## Clustering Heatmap Explanation
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+plot(dataFrame2,pch=16,col="blue",cex=1.5)
+text(dataFrame2$x-.05,dataFrame2$y)
+abline(v=1.5,lwd=3,col="green")
+abline(v=2.5,lwd=3,col="purple")
+abline(h=1.5,lwd=3,col="blue")
+heatmap.2(t(data.matrix(dataFrame2)),tracecol=NA,dendrogram="column",
+          add.expr = c(segments(x0=4.5,y0=1.5,y1=3,lwd=3,col="green"),
+                       segments(x0=8.5,y0=1.5,y1=3,lwd=3,col="purple"),
+                       segments(x0=4.5,y0=0,y1=1.5,lwd=3,col="blue")))
+```
+
+---
+## Hierarchical Clustering Example
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+plot(as.dendrogram(hclust(dist(dataFrame))))
+```
+
+```{r,cache=TRUE,message=FALSE}
+distanceMatrix <- dist(dataFrame) # compute distance matrix
+hc <- hclust(distanceMatrix) # cluster based on calculated distances
+```
+
+
+--- &twocoltopbottom
+## Hierarchical Clustering Example
+
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+par(mai=c(1.02,0.82,0.82,0.42))
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+plot(as.dendrogram(hclust(dist(dataFrame))))
+abline(h=1.5,col="blue",lwd=2)
+```
+*** =left
+* Cutoff at distance 1.5
+     * Intersects 3 lines in dendrogram
+     * # clusters at this distance: 3
+
+--- &twocoltopbottom
+## Hierarchical Clustering Example
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE,message=FALSE}
+library(plotrix)
+#left
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+draw.circle(x=2,y=2.2,radius=.5,border="blue")
+draw.circle(x=0.8,y=1,radius=.5,border="blue")
+draw.circle(x=2.8,y=1,radius=.2,border="blue")
+#right
+plot(as.dendrogram(hclust(dist(dataFrame))))
+abline(h=1.5,col="blue",lwd=2)
+```
+*** =left
+* Cutoff at distance 1.5
+     * Intersects 3 lines in dendrogram
+     * # clusters at this distance: 3
+*** =right
+
+```{r,cache=TRUE,message=FALSE,eval=FALSE}
+cutree(hc, h = 1.5) # cut at height 1.5
+```
+```{r,cache=TRUE,message=FALSE,echo=FALSE}
+cat(cutree(hc, h = 1.5)) # cut at height 1.5
+```
+
+--- &twocoltopbottom
+## Hierarchical Clustering Example
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+#left
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+#right
+plot(as.dendrogram(hclust(dist(dataFrame))))
+abline(h=.4,col="red",lwd=2)
+```
+***=left
+* Cutoff at distance 0.4
+     * Intersects 5 lines in dendrogram
+     * # clusters at this distance: 5
+
+--- &twocoltopbottom
+## Hierarchical Clustering Example
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+#left
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+draw.circle(x=2,y=1.85,radius=.25,border="red")
+draw.circle(x=1.85,y=2.5,radius=.1,border="red")
+draw.circle(x=0.6,y=.9,radius=.2,border="red")
+draw.circle(x=1.1,y=1.1,radius=.2,border="red")
+draw.circle(x=2.8,y=1,radius=.2,border="red")
+#right
+plot(as.dendrogram(hclust(dist(dataFrame))))
+abline(h=.4,col="red",lwd=2)
+```
+***=left
+* Cutoff at distance 0.4
+     * Intersects 5 lines in dendrogram
+     * # clusters at this distance: 5
+*** =right
+
+```{r,cache=TRUE,message=FALSE,eval=FALSE}
+cutree(hc, h = 0.4) # cut at height 0.4
+```
+```{r,cache=TRUE,message=FALSE,echo=FALSE}
+cat(cutree(hc, h = 0.4)) # cut at height 0.4
+```
+
+--- &twocoltopbottom
+## Hierarchical Clustering Example
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE}
+# left
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+# right
+plot(as.dendrogram(hclust(dist(dataFrame))))
+abline(h=.05,col="green",lwd=2)
+```
+*** =left
+* Cutoff at distance 0.05
+     * Intersects all 12 lines in dendrogram
+     * # clusters at this distance: 12
+
+--- &twocoltopbottom
+## Hierarchical Clustering Example
+
+```{r,echo=FALSE,fig.width=8,fig.height=7,cache=TRUE,results="hide"}
+# left
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+mapply(function(xi,yi) draw.circle(xi,yi,radius=.1,border="green"),x,y)
+# right
+plot(as.dendrogram(hclust(dist(dataFrame))))
+abline(h=.05,col="green",lwd=2)
+```
+*** =left
+* Cutoff at distance 0.05
+     * Intersects all 12 lines in dendrogram
+     * # clusters at this distance: 12
+*** =right
+
+```{r,cache=TRUE,message=FALSE,eval=FALSE}
+cutree(hc, h = 0.05) # cut at height 0.05
+```
+```{r,cache=TRUE,message=FALSE,echo=FALSE}
+cat(cutree(hc, h = 0.05)) # cut at height 0.05
+```
+
+---
+## K-Means Clustering Example
+
+```{r,echo=FALSE,fig.width=12,fig.height=8,cache=TRUE}
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+```
+
+* Assumed number of clusters: 3
+* Calculate cluster centroids (= element representing center)
+
+---
+## K-Means Clustering Example
+
+```{r,echo=FALSE,fig.width=12,fig.height=8,cache=TRUE}
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+cx = c(1,1.8,2.5)
+cy = c(2,1.0,1.5)
+points(cx,cy,col=c("red","orange","purple"),pch=3,cex=2,lwd=2)
+```
+```{r,echo=FALSE,cache=TRUE}
+#distances to clusters
+mdist <- function(x,y,cx,cy){
+  distTmp <- matrix(NA,nrow=3,ncol=12)
+  distTmp[1,] <- (x-cx[1])^2 + (y-cy[1])^2
+  distTmp[2,] <- (x-cx[2])^2 + (y-cy[2])^2
+  distTmp[3,] <- (x-cx[3])^2 + (y-cy[3])^2  
+  return(distTmp)
+}
+distTmp <- mdist(x,y,cx,cy)
+newClust <- apply(distTmp,2,which.min)
+cols1 <- c("red","orange","purple")
+```
+* Cluster assignments based on minimal distance to centroids:
+
+```{r,echo=FALSE,results="asis"}
+library(knitr)
+df = t(data.frame(New_Cluster=cols1[newClust],row.names=seq_along(newClust)))
+kable(df)
+```
+
+---
+## K-Means Clustering Example
+
+```{r,echo=FALSE,fig.width=12,fig.height=8,cache=TRUE}
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+points(cx,cy,col=c("red","orange","purple"),pch=3,cex=2,lwd=2)
+points(x,y,pch=19,cex=2,col=cols1[newClust])
+```
+
+* **Next:** recalculate cluster centroids
+
+---
+## K-Means Clustering Example
+
+```{r,echo=FALSE,fig.width=12,fig.height=8,cache=TRUE}
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+newCx = tapply(x,newClust,mean)
+newCy = tapply(y,newClust,mean)
+points(cx,cy,col=cols1,pch=3,cex=2,lwd=2)
+points(newCx,newCy,col=cols1,pch=8,cex=2,lwd=2)
+points(x,y,pch=19,cex=2,col=cols1[newClust])
+```
+```{r,echo=FALSE,cache=TRUE}
+newClust2 <- apply(mdist(x,y,newCx,newCy),2,which.min)
+```
+
+* Cluster assignments based on minimal distance to centroids:
+
+```{r,echo=FALSE,results='asis'}
+library(knitr)
+df = t(data.frame(New_Cluster=cols1[newClust2],row.names=seq_along(newClust2)))
+kable(df)
+```
+
+---
+## K-Means Clustering Example
+
+```{r,echo=FALSE,fig.width=12,fig.height=8,cache=TRUE}
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+#points(cx,cy,col=cols1,pch=3,cex=2,lwd=2)
+points(newCx,newCy,col=cols1,pch=8,cex=2,lwd=2)
+points(x,y,pch=19,cex=2,col=cols1[newClust2])
+```
+
+* **Next:** recalculate cluster centroids
+
+---
+## K-Means Clustering Example
+
+```{r,echo=FALSE,fig.width=12,fig.height=8,cache=TRUE}
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+finalCx = tapply(x,newClust2,mean)
+finalCy = tapply(y,newClust2,mean)
+#points(cx,cy,col=cols1,pch=3,cex=2,lwd=2)
+points(newCx,newCy,col=cols1,pch=8,cex=2,lwd=2)
+points(finalCx,finalCy,col=cols1,pch=9,cex=2,lwd=2)
+points(x,y,pch=19,cex=2,col=cols1[newClust2])
+```
+```{r,echo=FALSE,cache=TRUE}
+newClust3 <- apply(mdist(x,y,finalCx,finalCy),2,which.min)
+```
+
+* Cluster assignments based on minimal distance to centroids:
+
+```{r,echo=FALSE,results='asis'}
+library(knitr)
+df = t(data.frame(New_Cluster=cols1[newClust3],row.names=seq_along(newClust3)))
+kable(df)
+```
+
+---
+## K-Means Clustering Example
+
+```{r,echo=FALSE,fig.width=12,fig.height=8,cache=TRUE}
+plot(dataFrame,pch=16,col="blue",cex=1.5)
+text(dataFrame$x-.05,dataFrame$y)
+#points(cx,cy,col=cols1,pch=3,cex=2,lwd=2)
+#points(newCx,newCy,col=cols1,pch=8,cex=2,lwd=2)
+points(finalCx,finalCy,col=cols1,pch=9,cex=2,lwd=2)
+points(x,y,pch=19,cex=2,col=cols1[newClust3])
+```
+
+**No more points would change cluster: we are done!**
+
+
+--- 
+
+## Data Science Step-by-Step
+
+Recall the steps you should take:
+
+1. ~~Get data~~
+2. ~~Clean and/or anonymize data~~
+3. ~~Explore data~~
+4. ~~Apply statistical methods~~
+5. ~~Fit simple models, eg. regression model~~
+6. ~~Apply machine learning algorithms~~
+7. **Evaluate, repeat if needed**
+
+--- &twocoltopbottom
+## Evaluation and Comparison of ML Models
+*** =left
+**Classification output: class label**
+* Either correct or incorrect
+* Common evaluation metrics:
+     * Accuracy: % correct
+          * Confidence intervals
+          * P-values
+     * True/False Positive/Negative Rate
+     * Confidence matrix
+     * Visual:
+          * Heatmap of confidence matrix
+          * Variable importance plots
+          * ROC curves
+
+*** =right
+**Regression output: continuous number**
+* Closer to real value = better
+* Common evaluation metrics:
+     * Residuals: what model doesn't explain
+     * (Adjusted) R-squared: goodness-of-fit
+     * Standard Error
+     * Correlation with real value
+     * Visual:
+          * Residual plots
+          * Variable importance plots
+
+---
+## Evaluating Classification in R: Accuracy
+* We use caret: *confusionMatrix()*
+* Accuracy best estimated on a validation/test set, eg:
+
+```{r,cache=TRUE}
+data(iris) # load the iris dataset
+# define an 80%/20% train/test split of the dataset
+trainIndex <- createDataPartition(iris$Species, p=0.80, list=FALSE)
+data_train <- iris[trainIndex,] ; data_test <- iris[-trainIndex,]
+model <- train(Species~., data=data_train, method='rpart') # train a model, eg. a decision tree
+predictions <- predict(model, data_test[,1:4]) # make predictions
+cm <- confusionMatrix(predictions, data_test$Species) # summarize results
+cm$overall
+```
+
+--- &twocoltopbottom
+## Evaluating Classification in R: Confusion Matrix
+
+*** =left
+* We use caret: *confusionMatrix()*
+* **Confusion matrix of course also in here:**
+
+```{r,cache=TRUE}
+cm <- confusionMatrix(predictions, 
+                      data_test$Species)
+cm$table
+```
+
+*** =right
+* **Heatmap visualization:**
+
+```{r,cache=TRUE,echo=FALSE}
+heatmap.2(cm$table,margins=c(10,10),tracecol=NA,
+          dendrogram='none',Rowv=FALSE)
+```
+
+---
+## Evaluating Classification in R: Variable Importance
+* Variable Importance Plot "VarImpPlot"
+* To evaluate model features' importance
+     * Top right: most important - bottom left: least important
+* In R: *randomForest* package, *varImpPlot()* function
+
+```{r,echo=FALSE,message=FALSE}
+library(randomForest)
+set.seed(4543)
+data(mtcars)
+classModel <- randomForest(mpg ~ ., data=mtcars, ntree=1000,
+                          keep.forest=FALSE, importance=TRUE)
+```
+```{r,cache=TRUE,eval=FALSE}
+varImpPlot(classModel)
+```
+```{r,cache=TRUE,fig.width=12,fig.height=4.5,echo=FALSE}
+par(bg=NA,mai=c(0,0,0,0),xpd = NA)
+varImpPlot(classModel,main="Variable Importance Plot",pch=19,oma=0)
+```
+
+--- &twocoltopbottom7030
+## Evaluating Classification in R: Evaluation Metrics
+*** =left
+<br>
+<div style='text-align: center;'>
+    <img height='5' src='ROC.png' />
+</div>
+*** =right
+<br>
+**Evaluation metrics:**
+* True positive rate (TPR), aka "Sensitivity", "Recall"
+* True negative rate (TNR), aka "Specificity"
+* False positive rate (FPR), aka "Fall-out", "Type I Error Rate"
+* False negative rate (FNR), aka "Miss Rate", "Type II Error Rate"
+     
+
+
+--- &twocol
+## Comparing Classification in R: ROC Curves
+*** =left
+* Receiver Operating Characteristic (ROC)
+* Evaluate performance of classifier
+     * Y-axis: true positive rate (TPR)
+     * X-axis: false positive rate (FPR)
+     * Bigger area under curve (AUC) = better
+
+```{r,echo=FALSE,message=FALSE,cache=TRUE,results='hide',fig.width=5,fig.height=5}
+library(pROC)
+library(ROCR)
+library(mlbench)
+library(randomForest)
+library(caret)
+par(bg=NA)
+data(Ionosphere)
+dat <- Ionosphere
+trainIndex <- createDataPartition(dat$Class,p=0.60,list=FALSE)
+data_train <- dat[trainIndex,]
+data_test <- dat[-trainIndex,]
+
+mdl1 <-randomForest(Class~.,data=data_train, mtry=2, ntree=1000, 
+     keep.forest=TRUE, importance=TRUE,test=data_test,
+     na.action = na.omit)
+
+preds = predict(mdl1,type="prob",newdata=data_test)[,2]
+prediction = prediction(preds, data_test$Class)
+performance = performance(prediction,"tpr","fpr")
+plot(performance,main="ROC Curve",col=2,lwd=2)
+abline(a=0,b=1,lwd=2,lty=2,col="gray")
+```
+
+*** =right
+* ROC curves also excellent for visual model comparison
+* Example: 
+
+```{r,echo=FALSE,message=FALSE,cache=TRUE,results='hide',fig.width=6.5,fig.height=6.5}
+par(bg=NA)
+library(pROC)
+library(e1071)
+library(randomForest)
+library(ROCR)
+c.legend<-c("Random Forest, AUC=","Decision Tree, AUC=","Naive Bayes, AUC=")
+# Model 1
+preds = predict(mdl1,type="prob",newdata=data_test)[,2]
+prediction = prediction(preds, data_test$Class)
+c.legend[1]<-paste(c.legend[1],
+                   round((performance(prediction,
+                                      "auc")@y.values)[[1]],3))
+performance = performance(prediction,"tpr","fpr")
+plot(performance,main="ROC Curve",col=2,lwd=2)
+#Model2
+mdl2 <- rpart(Class~.,data=data_train,method='class')
+preds = predict(mdl2,type="prob",newdata=data_test)[,2]
+prediction = prediction(preds, data_test$Class)
+c.legend[2]<-paste(c.legend[2],
+                   round((performance(prediction,
+                                      "auc")@y.values)[[1]],3))
+performance = performance(prediction,"tpr","fpr")
+plot(performance,add=TRUE,main="ROC Curve",col=1,lwd=2)
+#Model3
+mdl3 <- naiveBayes(Class~.,data=data_train, laplace = 3)
+preds = predict(mdl3,type="raw",newdata=data_test)[,2]
+prediction = prediction(preds, data_test$Class)
+c.legend[3]<-paste(c.legend[3],
+                   round((performance(prediction,
+                                      "auc")@y.values)[[1]],3))
+performance = performance(prediction,"tpr","fpr")
+plot(performance,add=TRUE,main="ROC Curve",col=3,lwd=2)
+#Finish
+abline(a=0,b=1,lwd=2,lty=2,col="gray")
+legend(0.4,0.2,c.legend,lty=c(1,1,1,1,1),
+       lwd=c(2,2,2,2,2),col=c("red","black","green"))
+```
+
+---
+## Sources
+Code and information adapted from:
+* H. Blockeel. Machine Learning and Inductive Inference. Acco, Leuven, 2010.
+* http://swirlstats.com/
+* http://www.r-bloggers.com/learning-kernels-svm/
+* http://coreynoone.com/archives/182
+* https://rpubs.com/ryankelly/svm
+* http://machinelearningmastery.com/
+
+--- {
+ tpl: thankyou,
+ social: [{title: Website, href: "http://www.archimiddle.com"}, {title: LinkedIn, href: "https://www.linkedin.com/company/archimiddle"}]
+}
+
+## Thank You
+
+For more information:
+
+
+
+
